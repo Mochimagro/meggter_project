@@ -1,45 +1,93 @@
 import Dexie, { type EntityTable } from "dexie";
 
-export interface EventRecord {
+export type VisitStatus = "want_to_visit" | "visited" | "skipped";
+export type SyncOperation = "create" | "update" | "delete";
+export type SyncEntity =
+  | "events"
+  | "circles"
+  | "circle_visits"
+  | "wishlist_items";
+
+export interface User {
   id: string;
+  email: string;
+  name: string;
+  createdAt: string;
+}
+
+export interface Event {
+  id: string;
+  userId: string | null;
   name: string;
   eventDate: string;
-  venue?: string;
+  venue: string | null;
+  memo: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
-export const db = new Dexie(`meggter`) as Dexie & {
-  events: EntityTable<EventRecord, `id`>;
-};
-db.version(1).stores({
-  events: `id, eventDate, name`,
-});
-
-export async function seedEventsIfEmpty() {
-  const count = await db.events.count();
-  if (count > 0) return;
-
-  await db.events.bulkAdd([
-    {
-      id: crypto.randomUUID(),
-      name: "例大祭",
-      eventDate: `2026-11-01`,
-      venue: `インテックス大阪`,
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "コミケ",
-      eventDate: `2026-12-30`,
-      venue: `東京ビッグサイト`,
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "当日",
-      eventDate: `2026-10-28`,
-      venue: `インテックス大阪`,
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
+export interface Circle {
+  id: string;
+  eventId: string;
+  circleName: string;
+  penName: string | null;
+  genre: string | null;
+  space: string | null;
+  mapUrl: string | null;
+  memo: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export interface CircleVisit {
+  id: string;
+  circleId: string;
+  visitedAt: string | null;
+  status: VisitStatus;
+  memo: string | null;
+}
+
+export interface WishlistItem {
+  id: string;
+  circleId: string;
+  title: string;
+  type: string | null;
+  price: number | null;
+  quantity: number;
+  purchased: boolean;
+  purchasedAt: string | null;
+  memo: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SyncQueueItem {
+  id: string;
+  clientId: string;
+  entity: SyncEntity;
+  entityId: string;
+  operation: SyncOperation;
+  payload: unknown;
+  createdAt: string;
+  syncedAt: string | null;
+}
+
+export const db = new Dexie("meggter_db") as Dexie & {
+  users: EntityTable<User, "id">;
+  events: EntityTable<Event, "id">;
+  circles: EntityTable<Circle, "id">;
+  circle_visits: EntityTable<CircleVisit, "id">;
+  wishlist_items: EntityTable<WishlistItem, "id">;
+  sync_queue: EntityTable<SyncQueueItem, "id">;
+};
+
+db.version(1).stores({
+  users: "id, email, name, createdAt",
+  events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+  circles:
+    "id, eventId, circleName, penName, genre, space, createdAt, updatedAt",
+  circle_visits: "id, circleId, visitedAt, status",
+  wishlist_items:
+    "id, circleId, title, type, purchased, purchasedAt, createdAt, updatedAt",
+  sync_queue: "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+});
