@@ -1,12 +1,11 @@
 import { Header } from "@/components/Header";
-import { Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router";
+import EventList from "./EventList";
 
 export default function TopPage() {
-  const navigate = useNavigate();
   return (
     <>
       <Header pageName="トップ"></Header>
+      <EventList></EventList>
     </>
   );
 }

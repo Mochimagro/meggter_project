@@ -1,5 +1,5 @@
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
-import type { CircleCardInfoProps } from "../entities/CardEntities";
+import type { CircleCardProps } from "../entities/CardEntities";
 import BookCard from "./BookCard";
 
 export default function CircleCard({
@@ -8,7 +8,7 @@ export default function CircleCard({
   space,
   totalPrice,
   books,
-}: CircleCardInfoProps) {
+}: CircleCardProps) {
   return (
     <Card.Root>
       <Card.Header>

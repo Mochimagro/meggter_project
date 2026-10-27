@@ -1,8 +1,12 @@
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
-import type { EventCardInfoProps } from "../entities/CardEntities";
+import type { EventInfoCardProps } from "../entities/CardEntities";
 import CircleCard from "./CircleCard";
 
-export default function EventCard({ title, date, circles }: EventCardInfoProps) {
+export default function EventInfoCard({
+  title,
+  date,
+  circles,
+}: EventInfoCardProps) {
   return (
     <Card.Root>
       <Card.Header>

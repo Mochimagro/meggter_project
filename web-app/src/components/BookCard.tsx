@@ -1,7 +1,7 @@
 import { Card, Heading, Text } from "@chakra-ui/react";
-import type { BookCardInfoProps } from "../entities/CardEntities";
+import type { BookCardProps } from "../entities/CardEntities";
 
-export default function BookCard({ title, price }: BookCardInfoProps) {
+export default function BookCard({ title, price }: BookCardProps) {
   return (
     <Card.Root>
       <Card.Header>
