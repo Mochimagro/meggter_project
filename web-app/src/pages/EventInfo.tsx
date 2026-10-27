@@ -1,6 +1,7 @@
 import EventInfoCard from "../components/EventInfoCard";
 import { useParams } from "react-router";
 import { useEventInfo } from "../features/events/useEventInfo";
+import { Header } from "@/components/Header";
 
 export default function EventInfo() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -16,7 +17,7 @@ export default function EventInfo() {
 
   return (
     <>
-      <h1>イベント情報</h1>
+      <Header pageName="イベント情報"></Header>
       <EventInfoCard {...event} />
     </>
   );

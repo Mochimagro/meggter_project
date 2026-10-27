@@ -19,7 +19,7 @@ export function Header({ pageName }: HeaderProps) {
       boxShadow="md"
     >
       <SideMenu />
-      <VStack align="center" gap={0}>
+      <VStack align="start" gap={0}>
         <Text fontSize="xl" fontWeight="bold">
           めぐったー
         </Text>
