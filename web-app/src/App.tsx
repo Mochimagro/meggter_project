@@ -1,13 +1,19 @@
-import { Button, Heading } from "@chakra-ui/react";
+import { BrowserRouter, Route, Routes } from "react-router";
+import TopPage from "../pages/TopPage";
+import EventList from "../pages/EventList";
+import EventEdit from "../pages/EventEdit";
+import EventInfo from "../pages/EventInfo";
 
 function App() {
   return (
-    <>
-      <Heading as={"h1"}>めぐったー</Heading>
-      <Button colorPalette="teal" fontWeight={"bold"}>
-        登録
-      </Button>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<TopPage />} />
+        <Route path="/events" element={<EventList />} />
+        <Route path="/events/edit" element={<EventEdit />} />
+        <Route path="/events/info" element={<EventInfo />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
