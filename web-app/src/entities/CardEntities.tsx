@@ -1,6 +1,8 @@
 export type EventListProps = { events: EventInfoCardProps[] };
 
-export type EventListCardProps = Pick<EventInfoCardProps, "title" | "date">;
+export type EventListCardProps = Pick<EventInfoCardProps, "title" | "date"> & {
+  id: string;
+};
 
 export type EventInfoCardProps = {
   title: string;
@@ -12,11 +14,11 @@ export type CircleCardProps = {
   name: string;
   penName: string;
   space: string;
-  totalPrice: number;
+  totalPrice: number | null;
   books: BookCardProps[];
 };
 
 export type BookCardProps = {
   title: string;
-  price: number;
+  price: number | null;
 };

@@ -13,6 +13,7 @@ export default function EventList() {
       {events.map((event) => (
         <EventListCard
           key={event.id}
+          id={event.id}
           title={event.name}
           date={event.eventDate}
         />

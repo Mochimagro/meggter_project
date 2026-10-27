@@ -15,7 +15,9 @@ export default function CircleCard({
         <Heading size="md">{name}</Heading>
         <Text>{penName}</Text>
         <Text>スペース: {space}</Text>
-        <Text>合計: {totalPrice}円</Text>
+        <Text>
+          合計: {totalPrice === null ? "価格未設定" : `${totalPrice}円`}
+        </Text>
       </Card.Header>
       <Card.Body>
         <Stack>

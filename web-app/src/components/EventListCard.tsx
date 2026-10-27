@@ -1,8 +1,9 @@
 import { Button, Card, Heading, Text } from "@chakra-ui/react";
 import { isToday, parseISO } from "date-fns";
 import type { EventListCardProps } from "../entities/CardEntities";
+import { useNavigate } from "react-router";
 
-export default function EventListCard({ title, date }: EventListCardProps) {
+export default function EventListCard({ id, title, date }: EventListCardProps) {
   const dateParts = date.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日$/);
   const isEventToday = dateParts
     ? isToday(
@@ -11,7 +12,7 @@ export default function EventListCard({ title, date }: EventListCardProps) {
         ),
       )
     : false;
-
+  const navigate = useNavigate();
   return (
     <Card.Root
       margin="8px"
@@ -27,7 +28,11 @@ export default function EventListCard({ title, date }: EventListCardProps) {
             巡る
           </Button>
         ) : (
-          <Button margin="4px" backgroundColor={"blue.500"}>
+          <Button
+            onClick={() => navigate(`/events/${encodeURIComponent(id)}`)}
+            margin="4px"
+            backgroundColor={"blue.500"}
+          >
             詳細
           </Button>
         )}
