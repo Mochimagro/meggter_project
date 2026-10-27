@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import TopPage from "../pages/TopPage";
-import EventList from "../pages/EventList";
-import EventEdit from "../pages/EventEdit";
-import EventInfo from "../pages/EventInfo";
+import TopPage from "./pages/TopPage";
+import EventList from "./pages/EventList";
+import EventEdit from "./pages/EventEdit";
+import EventInfo from "./pages/EventInfo";
 
 function App() {
   return (
