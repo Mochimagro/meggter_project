@@ -1,12 +1,11 @@
-import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Card, Heading, Flex, Stack, Text } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import {
-  useAddCircle,
-  type CircleSelection,
-} from "@/hooks/useAddCircle";
+import { useAddCircle, type CircleSelection } from "@/hooks/useAddCircle";
 import type { EventInfoCardProps } from "../entities/CardEntities";
 import EventAddCirclrCard from "./EventAddCirclrCard";
 import EventCircleListCard from "./EventCircleListCard";
+import { BsMap } from "react-icons/bs";
+import { FaCalendarAlt } from "react-icons/fa";
 
 type EventInfoCardComponentProps = EventInfoCardProps & { eventId: string };
 
@@ -57,9 +56,16 @@ export default function EventInfoCard({
   return (
     <Card.Root>
       <Card.Header>
-        <Heading size="md">{title}</Heading>
-        <Text>{date}</Text>
-        {venue && <Text>会場・開催地：{venue}</Text>}
+        <Heading size="4xl">{title}</Heading>
+
+        <Flex align="center" gap={2}>
+          <FaCalendarAlt />
+          <Text>{date}</Text>
+        </Flex>
+        <Flex align="center" gap={2}>
+          <BsMap />
+          <Text>{venue}</Text>
+        </Flex>
         {entranceFee != null && (
           <Text>参加費：{entranceFee.toLocaleString()}円</Text>
         )}

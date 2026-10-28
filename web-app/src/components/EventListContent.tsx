@@ -23,6 +23,7 @@ export default function EventListContent({
           id={event.id}
           title={event.name}
           date={event.eventDate}
+          venue={event.venue}
         />
       ))}
     </Container>

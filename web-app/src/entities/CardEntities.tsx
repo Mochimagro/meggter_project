@@ -1,6 +1,9 @@
 export type EventListProps = { events: EventInfoCardProps[] };
 
-export type EventListCardProps = Pick<EventInfoCardProps, "title" | "date"> & {
+export type EventListCardProps = Pick<
+  EventInfoCardProps,
+  "title" | "date" | "venue"
+> & {
   id: string;
 };
 

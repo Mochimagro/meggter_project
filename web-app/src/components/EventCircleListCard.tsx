@@ -1,4 +1,4 @@
-import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Card, Heading, Stack, Text, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import {
   useAddWishlistItem,
@@ -7,10 +7,10 @@ import {
 import type { CircleCardProps } from "../entities/CardEntities";
 import CircleItemCard from "./CircleItemCard";
 import EventCircleAddItemCard from "./EventCircleAddItemCard";
+import { GiTwoCoins } from "react-icons/gi";
 
 export default function EventCircleListCard({
   circleVisitId,
-  priority,
   visited,
   name,
   penName,
@@ -30,19 +30,30 @@ export default function EventCircleListCard({
 
   return (
     <Card.Root
+      position="relative"
       className={isEntering ? "circle-card-enter" : undefined}
       onAnimationEnd={onAnimationEnd}
     >
       <Card.Header>
-        <Text>優先順位: {priority}</Text>
-        <Text>巡回状況: {visited ? "巡回済み" : "未巡回"}</Text>
-        <Heading size="md">{name || "サークル名未設定"}</Heading>
+        <Text fontSize="2xl">{space}</Text>
+        <Heading size="2xl">{name || "サークル名未設定"}</Heading>
         <Text>{penName}</Text>
-        <Text>スペース: {space}</Text>
-        <Text>
-          合計: {totalPrice === null ? "価格未設定" : `${totalPrice}円`}
-        </Text>
+        <Flex align="center" gap={2}>
+          <GiTwoCoins size={24} />
+          <Text fontSize="2xl">
+            軍資金: {totalPrice === null ? "価格未設定" : `${totalPrice}円`}
+          </Text>
+        </Flex>
       </Card.Header>
+      <Text
+        position="absolute"
+        top={3}
+        right={3}
+        fontWeight="bold"
+        color={visited ? "green.600" : "gray.600"}
+      >
+        {visited ? "巡回済み" : "未巡回"}
+      </Text>
       <Card.Body>
         <Stack>
           {books.map((book, index) => (
