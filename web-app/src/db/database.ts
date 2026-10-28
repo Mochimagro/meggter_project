@@ -21,6 +21,8 @@ export interface Event {
   name: string;
   eventDate: string;
   venue: string | null;
+  entranceFee?: number | null;
+  transportationExpenses?: number | null;
   memo: string | null;
   createdAt: string;
   updatedAt: string;

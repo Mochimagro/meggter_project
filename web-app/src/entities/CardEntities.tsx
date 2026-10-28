@@ -7,6 +7,9 @@ export type EventListCardProps = Pick<EventInfoCardProps, "title" | "date"> & {
 export type EventInfoCardProps = {
   title: string;
   date: string;
+  venue?: string | null;
+  entranceFee?: number | null;
+  transportationExpenses?: number | null;
   circles: CircleCardProps[];
 };
 

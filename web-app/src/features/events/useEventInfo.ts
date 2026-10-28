@@ -24,6 +24,9 @@ export function useEventInfo(eventId: string | undefined) {
     const eventInfo: EventInfoCardProps = {
       title: event.name,
       date: event.eventDate,
+      venue: event.venue,
+      entranceFee: event.entranceFee,
+      transportationExpenses: event.transportationExpenses,
       circles: circles.map((circle) => {
         const books = wishlistItems.filter((item) => item.circleId === circle.id);
         const pricedBooks = books.filter((book) => book.price !== null);
