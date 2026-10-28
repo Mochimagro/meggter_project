@@ -14,11 +14,14 @@ export type EventInfoCardProps = {
 };
 
 export type CircleCardProps = {
+  id: string;
   name: string;
   penName: string;
   space: string;
   totalPrice: number | null;
   books: BookCardProps[];
+  isEntering?: boolean;
+  onAnimationEnd?: () => void;
 };
 
 export type BookCardProps = {

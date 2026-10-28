@@ -1,4 +1,4 @@
-import { Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { CircleCardProps } from "../entities/CardEntities";
 import BookCard from "./BookCard";
 
@@ -8,11 +8,16 @@ export default function CircleCard({
   space,
   totalPrice,
   books,
+  isEntering = false,
+  onAnimationEnd,
 }: CircleCardProps) {
   return (
-    <Card.Root>
+    <Card.Root
+      className={isEntering ? "circle-card-enter" : undefined}
+      onAnimationEnd={onAnimationEnd}
+    >
       <Card.Header>
-        <Heading size="md">{name}</Heading>
+        <Heading size="md">{name || "サークル名未設定"}</Heading>
         <Text>{penName}</Text>
         <Text>スペース: {space}</Text>
         <Text>
@@ -26,6 +31,7 @@ export default function CircleCard({
           ))}
         </Stack>
       </Card.Body>
+      <Button>買うもの追加</Button>
     </Card.Root>
   );
 }

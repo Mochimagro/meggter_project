@@ -32,6 +32,7 @@ export function useEventInfo(eventId: string | undefined) {
         const pricedBooks = books.filter((book) => book.price !== null);
 
         return {
+          id: circle.id,
           name: circle.circleName,
           penName: circle.penName ?? "",
           space: circle.space ?? "",

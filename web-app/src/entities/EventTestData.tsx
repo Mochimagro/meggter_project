@@ -7,6 +7,7 @@ export const events: EventListProps = {
       date: "2026年4月12日",
       circles: [
         {
+          id: "sakura-bunko",
           name: "さくら文庫",
           penName: "桜井はる",
           space: "A-01",
@@ -23,6 +24,7 @@ export const events: EventListProps = {
       date: "2026年7月19日",
       circles: [
         {
+          id: "aozora-atelier",
           name: "青空アトリエ",
           penName: "青井なつ",
           space: "B-12",
@@ -39,6 +41,7 @@ export const events: EventListProps = {
       date: "2026年10月27日",
       circles: [
         {
+          id: "tsukiyo-shobo",
           name: "月夜書房",
           penName: "月野あき",
           space: "C-03",

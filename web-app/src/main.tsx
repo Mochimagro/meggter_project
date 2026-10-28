@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { seedEventsIfEmpty } from "./db/seed.ts";
+import "./animations.css";
 
 seedEventsIfEmpty();
 
