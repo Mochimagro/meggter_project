@@ -15,6 +15,7 @@ export type EventInfoCardProps = {
 
 export type CircleCardProps = {
   id: string;
+  circleVisitId: string;
   priority: number;
   visited: boolean;
   name: string;

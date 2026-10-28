@@ -103,6 +103,7 @@ export async function seedEventsIfEmpty() {
   const wishlistItems: WishlistItem[] = [
     {
       id: wishlistItemId1,
+      circleId: circleId1,
       circleVisitId: circleVisitId1,
       title: "新刊",
       type: "同人誌",
@@ -116,6 +117,7 @@ export async function seedEventsIfEmpty() {
     },
     {
       id: wishlistItemId2,
+      circleId: circleId1,
       circleVisitId: circleVisitId1,
       title: "アクリルキーホルダー",
       type: "グッズ",
@@ -129,6 +131,7 @@ export async function seedEventsIfEmpty() {
     },
     {
       id: wishlistItemId3,
+      circleId: circleId2,
       circleVisitId: circleVisitId2,
       title: "ボクセル素材集",
       type: "デジタル",

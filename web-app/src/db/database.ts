@@ -52,6 +52,7 @@ export interface CircleVisit {
 
 export interface WishlistItem {
   id: string;
+  circleId: string;
   circleVisitId: string;
   title: string;
   type: string | null;
@@ -342,5 +343,60 @@ db.version(4)
         record.space = visit.space;
       }
       await syncQueueTable.update(item.id, { payload });
+    }
+  });
+
+db.version(5)
+  .stores({
+    users: "id, email, name, createdAt",
+    events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+    circles: "id, circleName, penName, genre, createdAt, updatedAt",
+    circle_visits:
+      "id, eventId, circleId, priority, &[eventId+priority], space, visitedAt, status",
+    wishlist_items:
+      "id, circleId, circleVisitId, title, type, purchased, purchasedAt, createdAt, updatedAt",
+    sync_queue:
+      "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+  })
+  .upgrade(async (transaction) => {
+    const visitTable = transaction.table("circle_visits");
+    const wishlistTable = transaction.table("wishlist_items");
+    const syncQueueTable = transaction.table("sync_queue");
+    const visits = await visitTable.toArray();
+    const circleIdByVisitId = new Map(
+      visits.map((visit) => [visit.id, visit.circleId]),
+    );
+    const items = await wishlistTable.toArray();
+
+    for (const item of items) {
+      const circleId = circleIdByVisitId.get(item.circleVisitId);
+      if (!circleId) {
+        throw new Error(
+          `Cannot migrate wishlist item ${item.id}: circle visit ${item.circleVisitId} was not found.`,
+        );
+      }
+      await wishlistTable.update(item.id, { circleId });
+    }
+
+    const syncQueueItems = await syncQueueTable
+      .where("entity")
+      .equals("wishlist_items")
+      .toArray();
+    for (const queueItem of syncQueueItems) {
+      const payload = queueItem.payload;
+      if (!payload || typeof payload !== "object") {
+        throw new Error(
+          `Cannot migrate sync item ${queueItem.id}: wishlist item payload is invalid.`,
+        );
+      }
+      const record = payload as Record<string, unknown>;
+      const circleId = circleIdByVisitId.get(String(record.circleVisitId));
+      if (!circleId) {
+        throw new Error(
+          `Cannot migrate sync item ${queueItem.id}: circle visit ${String(record.circleVisitId)} was not found.`,
+        );
+      }
+      record.circleId = circleId;
+      await syncQueueTable.update(queueItem.id, { payload });
     }
   });

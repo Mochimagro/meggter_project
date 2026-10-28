@@ -47,6 +47,7 @@ export function useEventInfo(eventId: string | undefined) {
 
         return [{
           id: circle.id,
+          circleVisitId: visit.id,
           priority: visit.priority,
           visited: visit.status === "visited",
           name: circle.circleName,

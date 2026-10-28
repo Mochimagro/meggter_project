@@ -1,8 +1,15 @@
 import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  useAddWishlistItem,
+  type NewWishlistItem,
+} from "@/hooks/useAddWishlistItem";
 import type { CircleCardProps } from "../entities/CardEntities";
-import BookCard from "./BookCard";
+import CircleItemCard from "./CircleItemCard";
+import EventCircleAddItemCard from "./EventCircleAddItemCard";
 
 export default function EventCircleListCard({
+  circleVisitId,
   priority,
   visited,
   name,
@@ -13,6 +20,14 @@ export default function EventCircleListCard({
   isEntering = false,
   onAnimationEnd,
 }: CircleCardProps) {
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const addWishlistItem = useAddWishlistItem();
+  const handleAddWishlistItem = async (item: NewWishlistItem) => {
+    const itemId = await addWishlistItem(circleVisitId, item);
+    setIsAddingItem(false);
+    return itemId;
+  };
+
   return (
     <Card.Root
       className={isEntering ? "circle-card-enter" : undefined}
@@ -31,13 +46,25 @@ export default function EventCircleListCard({
       <Card.Body>
         <Stack>
           {books.map((book, index) => (
-            <BookCard key={`${book.title}-${index}`} {...book} />
+            <CircleItemCard key={`${book.title}-${index}`} {...book} />
           ))}
         </Stack>
       </Card.Body>
       <Card.Footer justifyContent="flex-end">
-        <Button>買うもの追加</Button>
+        <Button
+          type="button"
+          onClick={() => setIsAddingItem(true)}
+          disabled={isAddingItem}
+        >
+          買うもの追加
+        </Button>
       </Card.Footer>
+      {isAddingItem && (
+        <EventCircleAddItemCard
+          onAdd={handleAddWishlistItem}
+          onCancel={() => setIsAddingItem(false)}
+        />
+      )}
     </Card.Root>
   );
 }
