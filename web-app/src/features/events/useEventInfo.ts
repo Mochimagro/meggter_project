@@ -13,13 +13,21 @@ export function useEventInfo(eventId: string | undefined) {
       return null;
     }
 
-    const circles = await db.circles.where("eventId").equals(eventId).toArray();
-    const wishlistItems = circles.length
+    const visits = await db.circle_visits
+      .where("eventId")
+      .equals(eventId)
+      .sortBy("priority");
+    const circleIds = [...new Set(visits.map((visit) => visit.circleId))];
+    const circles = circleIds.length
+      ? await db.circles.where("id").anyOf(circleIds).toArray()
+      : [];
+    const wishlistItems = visits.length
       ? await db.wishlist_items
-          .where("circleId")
-          .anyOf(circles.map((circle) => circle.id))
+          .where("circleVisitId")
+          .anyOf(visits.map((visit) => visit.id))
           .toArray()
       : [];
+    const circlesById = new Map(circles.map((circle) => [circle.id, circle]));
 
     const eventInfo: EventInfoCardProps = {
       title: event.name,
@@ -27,12 +35,20 @@ export function useEventInfo(eventId: string | undefined) {
       venue: event.venue,
       entranceFee: event.entranceFee,
       transportationExpenses: event.transportationExpenses,
-      circles: circles.map((circle) => {
-        const books = wishlistItems.filter((item) => item.circleId === circle.id);
+      circles: visits.flatMap((visit) => {
+        const circle = circlesById.get(visit.circleId);
+        if (!circle) {
+          return [];
+        }
+        const books = wishlistItems.filter(
+          (item) => item.circleVisitId === visit.id,
+        );
         const pricedBooks = books.filter((book) => book.price !== null);
 
-        return {
+        return [{
           id: circle.id,
+          priority: visit.priority,
+          visited: visit.status === "visited",
           name: circle.circleName,
           penName: circle.penName ?? "",
           space: circle.space ?? "",
@@ -48,7 +64,7 @@ export function useEventInfo(eventId: string | undefined) {
             title: book.title,
             price: book.price,
           })),
-        };
+        }];
       }),
     };
 

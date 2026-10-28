@@ -8,6 +8,8 @@ export const events: EventListProps = {
       circles: [
         {
           id: "sakura-bunko",
+          priority: 1,
+          visited: false,
           name: "さくら文庫",
           penName: "桜井はる",
           space: "A-01",
@@ -25,6 +27,8 @@ export const events: EventListProps = {
       circles: [
         {
           id: "aozora-atelier",
+          priority: 1,
+          visited: false,
           name: "青空アトリエ",
           penName: "青井なつ",
           space: "B-12",
@@ -42,6 +46,8 @@ export const events: EventListProps = {
       circles: [
         {
           id: "tsukiyo-shobo",
+          priority: 1,
+          visited: false,
           name: "月夜書房",
           penName: "月野あき",
           space: "C-03",

@@ -3,6 +3,8 @@ import type { CircleCardProps } from "../entities/CardEntities";
 import BookCard from "./BookCard";
 
 export default function CircleCard({
+  priority,
+  visited,
   name,
   penName,
   space,
@@ -17,6 +19,8 @@ export default function CircleCard({
       onAnimationEnd={onAnimationEnd}
     >
       <Card.Header>
+        <Text>優先順位: {priority}</Text>
+        <Text>巡回状況: {visited ? "巡回済み" : "未巡回"}</Text>
         <Heading size="md">{name || "サークル名未設定"}</Heading>
         <Text>{penName}</Text>
         <Text>スペース: {space}</Text>
@@ -31,7 +35,9 @@ export default function CircleCard({
           ))}
         </Stack>
       </Card.Body>
-      <Button>買うもの追加</Button>
+      <Card.Footer justifyContent="flex-end">
+        <Button>買うもの追加</Button>
+      </Card.Footer>
     </Card.Root>
   );
 }

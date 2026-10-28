@@ -57,7 +57,6 @@ export async function seedEventsIfEmpty() {
   const circles: Circle[] = [
     {
       id: circleId1,
-      eventId,
       circleName: "サークルA",
       penName: "作者A",
       genre: "オリジナル",
@@ -69,7 +68,6 @@ export async function seedEventsIfEmpty() {
     },
     {
       id: circleId2,
-      eventId,
       circleName: "サークルB",
       penName: "作者B",
       genre: "ゲーム",
@@ -84,14 +82,18 @@ export async function seedEventsIfEmpty() {
   const circleVisits: CircleVisit[] = [
     {
       id: circleVisitId1,
+      eventId,
       circleId: circleId1,
+      priority: 1,
       visitedAt: null,
       status: "want_to_visit",
       memo: "開場直後に向かう",
     },
     {
       id: circleVisitId2,
+      eventId,
       circleId: circleId2,
+      priority: 2,
       visitedAt: null,
       status: "want_to_visit",
       memo: null,
@@ -101,7 +103,7 @@ export async function seedEventsIfEmpty() {
   const wishlistItems: WishlistItem[] = [
     {
       id: wishlistItemId1,
-      circleId: circleId1,
+      circleVisitId: circleVisitId1,
       title: "新刊",
       type: "同人誌",
       price: 1000,
@@ -114,7 +116,7 @@ export async function seedEventsIfEmpty() {
     },
     {
       id: wishlistItemId2,
-      circleId: circleId1,
+      circleVisitId: circleVisitId1,
       title: "アクリルキーホルダー",
       type: "グッズ",
       price: 800,
@@ -127,7 +129,7 @@ export async function seedEventsIfEmpty() {
     },
     {
       id: wishlistItemId3,
-      circleId: circleId2,
+      circleVisitId: circleVisitId2,
       title: "ボクセル素材集",
       type: "デジタル",
       price: 1500,

@@ -84,7 +84,7 @@ export default function EventInfoCard({
         </Stack>
       </Card.Body>
 
-      <Card.Footer>
+      <Card.Footer justifyContent="flex-end">
         <Button
           type="button"
           onClick={handleAddCircle}
