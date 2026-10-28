@@ -28,6 +28,7 @@ export default function EventAddCirclrCard({
 }: EventAddCirclrCardProps) {
   const [selectedCircleId, setSelectedCircleId] = useState("");
   const [newCircleName, setNewCircleName] = useState("");
+  const [penName, setPenName] = useState("");
   const [space, setSpace] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addError, setAddError] = useState("");
@@ -50,12 +51,16 @@ export default function EventAddCirclrCard({
     try {
       await onAdd(
         isCreatingNewCircle
-          ? { circleName: newCircleName.trim(), space: space.trim() }
+          ? {
+              circleName: newCircleName.trim(),
+              penName: penName.trim(),
+              space: space.trim(),
+            }
           : { circleId: selectedCircleId, space: space.trim() },
       );
     } catch (error) {
       if (error instanceof CircleAlreadyAddedError) {
-        setAddError("本イベントに既に追加済みです。");
+        setAddError("一つのイベントに同じサークルは登録できません。");
       } else {
         setAddError("サークルを追加できませんでした。再度お試しください。");
       }
@@ -87,34 +92,47 @@ export default function EventAddCirclrCard({
                   {circle.circleName || "サークル名未設定"}
                 </option>
               ))}
-              <option value={NEW_CIRCLE_OPTION}>新規サークル追加</option>
+              <option value={NEW_CIRCLE_OPTION}>【新規サークル追加】</option>
             </select>
           </Field.Root>
           {isCreatingNewCircle && (
+            <>
+              <Field.Root required>
+                <Field.Label>
+                  新しいサークル名 <Text color="red.500">*</Text>
+                </Field.Label>
+                <Input
+                  autoFocus
+                  required
+                  value={newCircleName}
+                  onChange={(event) => setNewCircleName(event.target.value)}
+                  placeholder="サークル名を入力してください"
+                />
+              </Field.Root>
+              <Field.Root>
+                <Field.Label>サークル主名（任意）</Field.Label>
+                <Input
+                  value={penName}
+                  onChange={(event) => setPenName(event.target.value)}
+                  placeholder="サークル主の名前を入力してください"
+                />
+              </Field.Root>
+            </>
+          )}
+          {selectedCircleId && (
             <Field.Root required>
               <Field.Label>
-                新しいサークル名 <Text color="red.500">*</Text>
+                配置場所 <Text color="red.500">*</Text>
               </Field.Label>
               <Input
-                autoFocus
                 required
-                value={newCircleName}
-                onChange={(event) => setNewCircleName(event.target.value)}
-                placeholder="サークル名を入力してください"
+                value={space}
+                onChange={(event) => setSpace(event.target.value)}
+                placeholder="スペース番号を入力してください"
               />
             </Field.Root>
           )}
-          <Field.Root required>
-            <Field.Label>
-              配置場所 <Text color="red.500">*</Text>
-            </Field.Label>
-            <Input
-              required
-              value={space}
-              onChange={(event) => setSpace(event.target.value)}
-              placeholder="スペース番号を入力してください"
-            />
-          </Field.Root>
+
           {addError && (
             <Text role="alert" color="red.600">
               {addError}

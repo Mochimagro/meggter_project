@@ -7,7 +7,7 @@ import {
 
 export type CircleSelection =
   | { circleId: string; space: string }
-  | { circleName: string; space: string };
+  | { circleName: string; penName?: string; space: string };
 
 export class CircleAlreadyAddedError extends Error {
   constructor() {
@@ -28,7 +28,7 @@ export function useAddCircle() {
       ? {
           id: circleId,
           circleName: selection.circleName.trim(),
-          penName: null,
+          penName: selection.penName?.trim() || null,
           genre: null,
           mapUrl: null,
           memo: null,

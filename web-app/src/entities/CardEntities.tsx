@@ -31,6 +31,7 @@ export type CircleCardProps = {
 };
 
 export type BookCardProps = {
+  id: string;
   title: string;
   price: number | null;
 };

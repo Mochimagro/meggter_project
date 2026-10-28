@@ -62,6 +62,7 @@ export function useEventInfo(eventId: string | undefined) {
                 )
               : null,
           books: books.map((book) => ({
+            id: book.id,
             title: book.title,
             price: book.price,
           })),
