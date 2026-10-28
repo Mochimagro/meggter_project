@@ -2,7 +2,7 @@ import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { CircleCardProps } from "../entities/CardEntities";
 import BookCard from "./BookCard";
 
-export default function CircleCard({
+export default function EventCircleListCard({
   priority,
   visited,
   name,

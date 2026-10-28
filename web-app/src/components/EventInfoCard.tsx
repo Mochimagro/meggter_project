@@ -1,8 +1,12 @@
 import { Button, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { useAddCircle } from "@/hooks/useAddCircle";
+import {
+  useAddCircle,
+  type CircleSelection,
+} from "@/hooks/useAddCircle";
 import type { EventInfoCardProps } from "../entities/CardEntities";
-import CircleCard from "./CircleCard";
+import EventAddCirclrCard from "./EventAddCirclrCard";
+import EventCircleListCard from "./EventCircleListCard";
 
 type EventInfoCardComponentProps = EventInfoCardProps & { eventId: string };
 
@@ -16,37 +20,29 @@ export default function EventInfoCard({
   circles,
 }: EventInfoCardComponentProps) {
   const addCircle = useAddCircle();
-  const [isAddingCircle, setIsAddingCircle] = useState(false);
-  const [addError, setAddError] = useState("");
+  const [editingCircleId, setEditingCircleId] = useState<string | null>(null);
   const [animatedCircleIds, setAnimatedCircleIds] = useState<Set<string>>(
     () => new Set(),
   );
   const isAddingCircleRef = useRef(false);
 
-  const handleAddCircle = async () => {
+  const handleAddCircle = async (selection: CircleSelection) => {
     if (isAddingCircleRef.current) {
-      return;
+      throw new Error("サークルを追加中です。");
     }
 
     isAddingCircleRef.current = true;
-    setIsAddingCircle(true);
-    setAddError("");
-    const circleId = crypto.randomUUID();
-    setAnimatedCircleIds((currentIds) => new Set(currentIds).add(circleId));
 
     try {
-      await addCircle(eventId, circleId);
+      const circleId = await addCircle(eventId, selection);
+      setAnimatedCircleIds((currentIds) => new Set(currentIds).add(circleId));
+      setEditingCircleId(null);
+      return circleId;
     } catch (error) {
       console.error("サークルの追加に失敗しました。", error);
-      setAddError("サークルを追加できませんでした。再度お試しください。");
-      setAnimatedCircleIds((currentIds) => {
-        const nextIds = new Set(currentIds);
-        nextIds.delete(circleId);
-        return nextIds;
-      });
+      throw error;
     } finally {
       isAddingCircleRef.current = false;
-      setIsAddingCircle(false);
     }
   };
 
@@ -74,29 +70,30 @@ export default function EventInfoCard({
       <Card.Body>
         <Stack>
           {circles.map((circle) => (
-            <CircleCard
+            <EventCircleListCard
               key={circle.id}
               {...circle}
               isEntering={animatedCircleIds.has(circle.id)}
               onAnimationEnd={() => handleCircleAnimationEnd(circle.id)}
             />
           ))}
+          {editingCircleId && (
+            <EventAddCirclrCard
+              onAdd={handleAddCircle}
+              onCancel={() => setEditingCircleId(null)}
+            />
+          )}
         </Stack>
       </Card.Body>
 
       <Card.Footer justifyContent="flex-end">
         <Button
           type="button"
-          onClick={handleAddCircle}
-          disabled={isAddingCircle}
+          onClick={() => setEditingCircleId(crypto.randomUUID())}
+          disabled={editingCircleId !== null}
         >
-          {isAddingCircle ? "追加中..." : "サークル追加"}
+          サークル追加
         </Button>
-        {addError && (
-          <Text role="alert" color="red.600">
-            {addError}
-          </Text>
-        )}
       </Card.Footer>
     </Card.Root>
   );
