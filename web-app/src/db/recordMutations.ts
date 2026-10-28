@@ -92,6 +92,7 @@ export async function updateEventCircle(
   changes: {
     circleName: string;
     penName: string | null;
+    circleURL: string | null;
     space: string;
   },
 ) {
@@ -109,6 +110,7 @@ export async function updateEventCircle(
         ...circle,
         circleName: changes.circleName,
         penName: changes.penName,
+        circleURL: changes.circleURL,
         updatedAt: new Date().toISOString(),
       };
       const updatedVisit: CircleVisit = {
@@ -194,7 +196,10 @@ export async function deleteWishlistItem(itemId: string) {
 
 export async function updateCircle(
   circleId: string,
-  changes: Pick<Circle, "circleName" | "penName" | "genre" | "memo">,
+  changes: Pick<
+    Circle,
+    "circleName" | "penName" | "circleURL" | "genre" | "memo"
+  >,
 ) {
   await db.transaction("rw", [db.circles, db.sync_queue], async () => {
     const circle = await db.circles.get(circleId);

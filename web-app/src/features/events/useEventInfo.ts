@@ -52,6 +52,7 @@ export function useEventInfo(eventId: string | undefined) {
           visited: visit.status === "visited",
           name: circle.circleName,
           penName: circle.penName ?? "",
+          circleURL: circle.circleURL,
           space: visit.space,
           totalPrice:
             pricedBooks.length > 0

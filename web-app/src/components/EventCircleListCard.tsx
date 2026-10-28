@@ -18,10 +18,8 @@ import CircleItemCard from "./CircleItemCard";
 import EventCircleAddItemCard from "./EventCircleAddItemCard";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
-import {
-  deleteEventCircle,
-  updateEventCircle,
-} from "@/db/recordMutations";
+import { deleteEventCircle, updateEventCircle } from "@/db/recordMutations";
+import { normalizeExternalUrl } from "@/utils/externalUrl";
 
 export default function EventCircleListCard({
   id,
@@ -29,6 +27,7 @@ export default function EventCircleListCard({
   visited,
   name,
   penName,
+  circleURL,
   space,
   totalPrice,
   books,
@@ -39,16 +38,19 @@ export default function EventCircleListCard({
   const [isEditing, setIsEditing] = useState(false);
   const [circleName, setCircleName] = useState(name);
   const [circlePenName, setCirclePenName] = useState(penName);
+  const [circleURLInput, setCircleURLInput] = useState(circleURL ?? "");
   const [circleSpace, setCircleSpace] = useState(space);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editError, setEditError] = useState("");
   const addWishlistItem = useAddWishlistItem();
+  const externalUrl = normalizeExternalUrl(circleURL ?? "");
   const canUpdate =
     circleName.trim().length > 0 && circleSpace.trim().length > 0;
 
   const handleStartEditing = () => {
     setCircleName(name);
     setCirclePenName(penName);
+    setCircleURLInput(circleURL ?? "");
     setCircleSpace(space);
     setEditError("");
     setIsEditing(true);
@@ -57,6 +59,7 @@ export default function EventCircleListCard({
   const handleCancelEditing = () => {
     setCircleName(name);
     setCirclePenName(penName);
+    setCircleURLInput(circleURL ?? "");
     setCircleSpace(space);
     setEditError("");
     setIsEditing(false);
@@ -67,12 +70,21 @@ export default function EventCircleListCard({
       return;
     }
 
+    const normalizedCircleURL = normalizeExternalUrl(circleURLInput);
+    if (circleURLInput.trim() && !normalizedCircleURL) {
+      setEditError(
+        "URLはhttpまたはhttpsから始まる正しい形式で入力してください。",
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setEditError("");
     try {
       await updateEventCircle(id, circleVisitId, {
         circleName: circleName.trim(),
         penName: circlePenName.trim() || null,
+        circleURL: normalizedCircleURL,
         space: circleSpace.trim(),
       });
       setIsEditing(false);
@@ -159,6 +171,16 @@ export default function EventCircleListCard({
                   onChange={(event) => setCirclePenName(event.target.value)}
                 />
               </Field.Root>
+              <Field.Root>
+                <Field.Label>URL</Field.Label>
+                <Input
+                  aria-label="URL"
+                  type="url"
+                  value={circleURLInput}
+                  onChange={(event) => setCircleURLInput(event.target.value)}
+                  placeholder="https://x.com/ または pixiv.net/"
+                />
+              </Field.Root>
               <Field.Root required>
                 <Field.Label>配置場所</Field.Label>
                 <Input
@@ -173,10 +195,27 @@ export default function EventCircleListCard({
               <Text fontSize="2xl">{space}</Text>
               <Heading size="2xl">{name || "サークル名未設定"}</Heading>
               <Text>{penName}</Text>
+              {circleURL && (
+                <Text typeof="url">
+                  {externalUrl ? (
+                    <a
+                      href={externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "blue", textDecoration: "underline" }}
+                    >
+                      {circleURL}
+                    </a>
+                  ) : (
+                    circleURL
+                  )}
+                </Text>
+              )}
               <Flex align="center" gap={2}>
                 <GiTwoCoins size={24} />
                 <Text fontSize="2xl">
-                  軍資金: {totalPrice === null ? "価格未設定" : `${totalPrice}円`}
+                  軍資金:{" "}
+                  {totalPrice === null ? "価格未設定" : `${totalPrice}円`}
                 </Text>
               </Flex>
             </>

@@ -14,6 +14,7 @@ import {
   CircleAlreadyAddedError,
   type CircleSelection,
 } from "@/hooks/useAddCircle";
+import { normalizeExternalUrl } from "@/utils/externalUrl";
 
 type EventAddCirclrCardProps = {
   onAdd: (selection: CircleSelection) => Promise<string>;
@@ -29,6 +30,7 @@ export default function EventAddCirclrCard({
   const [selectedCircleId, setSelectedCircleId] = useState("");
   const [newCircleName, setNewCircleName] = useState("");
   const [penName, setPenName] = useState("");
+  const [circleURL, setCircleURL] = useState("");
   const [space, setSpace] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addError, setAddError] = useState("");
@@ -46,6 +48,14 @@ export default function EventAddCirclrCard({
       return;
     }
 
+    const normalizedCircleURL = normalizeExternalUrl(circleURL);
+    if (circleURL.trim() && !normalizedCircleURL) {
+      setAddError(
+        "URLはhttpまたはhttpsから始まる正しい形式で入力してください。",
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setAddError("");
     try {
@@ -54,6 +64,7 @@ export default function EventAddCirclrCard({
           ? {
               circleName: newCircleName.trim(),
               penName: penName.trim(),
+              circleURL: normalizedCircleURL,
               space: space.trim(),
             }
           : { circleId: selectedCircleId, space: space.trim() },
@@ -115,6 +126,15 @@ export default function EventAddCirclrCard({
                   value={penName}
                   onChange={(event) => setPenName(event.target.value)}
                   placeholder="サークル主の名前を入力してください"
+                />
+              </Field.Root>
+              <Field.Root>
+                <Field.Label>URL（任意）</Field.Label>
+                <Input
+                  type="url"
+                  value={circleURL}
+                  onChange={(event) => setCircleURL(event.target.value)}
+                  placeholder="Twitter(現X)やPixivなどのURLを記入してください"
                 />
               </Field.Root>
             </>

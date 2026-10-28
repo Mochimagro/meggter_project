@@ -23,6 +23,7 @@ export type CircleCardProps = {
   visited: boolean;
   name: string;
   penName: string;
+  circleURL?: string | null;
   space: string;
   totalPrice: number | null;
   books: BookCardProps[];

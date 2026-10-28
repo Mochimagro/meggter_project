@@ -33,7 +33,7 @@ export interface Circle {
   circleName: string;
   penName: string | null;
   genre: string | null;
-  mapUrl: string | null;
+  circleURL: string | null;
   memo: string | null;
   createdAt: string;
   updatedAt: string;
@@ -398,5 +398,54 @@ db.version(5)
       }
       record.circleId = circleId;
       await syncQueueTable.update(queueItem.id, { payload });
+    }
+  });
+
+db.version(6)
+  .stores({
+    users: "id, email, name, createdAt",
+    events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+    circles: "id, circleName, penName, genre, createdAt, updatedAt",
+    circle_visits:
+      "id, eventId, circleId, priority, &[eventId+priority], space, visitedAt, status",
+    wishlist_items:
+      "id, circleId, circleVisitId, title, type, purchased, purchasedAt, createdAt, updatedAt",
+    sync_queue:
+      "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+  })
+  .upgrade(async (transaction) => {
+    const circleTable = transaction.table("circles");
+    const circles = await circleTable.toArray();
+
+    for (const circle of circles) {
+      const legacyCircle = circle as Circle & {
+        mapUrl?: string | null;
+      };
+      if ("mapUrl" in legacyCircle || !("circleURL" in legacyCircle)) {
+        const { mapUrl, ...circleData } = legacyCircle;
+        await circleTable.put({
+          ...circleData,
+          circleURL: legacyCircle.circleURL ?? mapUrl ?? null,
+        });
+      }
+    }
+
+    const syncQueueTable = transaction.table("sync_queue");
+    const circleSyncItems = await syncQueueTable
+      .where("entity")
+      .equals("circles")
+      .toArray();
+    for (const item of circleSyncItems) {
+      const payload = item.payload;
+      if (!payload || typeof payload !== "object") {
+        continue;
+      }
+
+      const record = payload as Record<string, unknown>;
+      if ("mapUrl" in record || !("circleURL" in record)) {
+        record.circleURL = record.circleURL ?? record.mapUrl ?? null;
+        delete record.mapUrl;
+        await syncQueueTable.update(item.id, { payload });
+      }
     }
   });

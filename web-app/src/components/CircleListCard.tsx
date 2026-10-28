@@ -12,6 +12,7 @@ import { useState } from "react";
 import type { Circle } from "@/db/database";
 import { deleteCircle, updateCircle } from "@/db/recordMutations";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { normalizeExternalUrl } from "@/utils/externalUrl";
 
 type CircleListCardProps = {
   circle: Circle;
@@ -21,14 +22,17 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [circleName, setCircleName] = useState(circle.circleName);
   const [penName, setPenName] = useState(circle.penName ?? "");
+  const [circleURL, setCircleURL] = useState(circle.circleURL ?? "");
   const [genre, setGenre] = useState(circle.genre ?? "");
   const [memo, setMemo] = useState(circle.memo ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editError, setEditError] = useState("");
+  const externalUrl = normalizeExternalUrl(circle.circleURL ?? "");
 
   const handleStartEditing = () => {
     setCircleName(circle.circleName);
     setPenName(circle.penName ?? "");
+    setCircleURL(circle.circleURL ?? "");
     setGenre(circle.genre ?? "");
     setMemo(circle.memo ?? "");
     setEditError("");
@@ -38,6 +42,7 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
   const handleCancelEditing = () => {
     setCircleName(circle.circleName);
     setPenName(circle.penName ?? "");
+    setCircleURL(circle.circleURL ?? "");
     setGenre(circle.genre ?? "");
     setMemo(circle.memo ?? "");
     setEditError("");
@@ -49,12 +54,21 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
       return;
     }
 
+    const normalizedCircleURL = normalizeExternalUrl(circleURL);
+    if (circleURL.trim() && !normalizedCircleURL) {
+      setEditError(
+        "URLはhttpまたはhttpsから始まる正しい形式で入力してください。",
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setEditError("");
     try {
       await updateCircle(circle.id, {
         circleName: circleName.trim(),
         penName: penName.trim() || null,
+        circleURL: normalizedCircleURL,
         genre: genre.trim() || null,
         memo: memo.trim() || null,
       });
@@ -109,6 +123,16 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
                 />
               </Field.Root>
               <Field.Root>
+                <Field.Label>URL</Field.Label>
+                <Input
+                  aria-label="URL"
+                  type="url"
+                  value={circleURL}
+                  onChange={(event) => setCircleURL(event.target.value)}
+                  placeholder="Twitter(現X)やPixivなどのURLを記入してください"
+                />
+              </Field.Root>
+              <Field.Root>
                 <Field.Label>ジャンル</Field.Label>
                 <Input
                   aria-label="ジャンル"
@@ -131,6 +155,22 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
                 {circle.circleName || "サークル名未設定"}
               </Heading>
               {circle.penName && <Text>ペンネーム: {circle.penName}</Text>}
+              {circle.circleURL && (
+                <Text>
+                  {externalUrl ? (
+                    <a
+                      href={externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "blue", textDecoration: "underline" }}
+                    >
+                      {circle.circleURL}
+                    </a>
+                  ) : (
+                    circle.circleURL
+                  )}
+                </Text>
+              )}
               {circle.genre && <Text>ジャンル: {circle.genre}</Text>}
               {circle.memo && <Text>メモ: {circle.memo}</Text>}
             </>
