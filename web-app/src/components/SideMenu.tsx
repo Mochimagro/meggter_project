@@ -43,28 +43,35 @@ export function SideMenu() {
                     justifyContent="flex-start"
                     onClick={() => navigateTo("/")}
                   >
-                    トップ
+                    トップページ
                   </Button>
                   <Button
                     variant="ghost"
                     justifyContent="flex-start"
                     onClick={() => navigateTo("/events")}
                   >
-                    イベント一覧
+                    イベント管理
                   </Button>
                   <Button
                     variant="ghost"
                     justifyContent="flex-start"
-                    onClick={() => navigateTo("/events/edit")}
+                    onClick={() => navigateTo("/circles")}
                   >
-                    イベント編集
+                    サークル管理
                   </Button>
                   <Button
                     variant="ghost"
                     justifyContent="flex-start"
-                    onClick={() => navigateTo("/events/info")}
+                    onClick={() => navigateTo("/")}
                   >
-                    イベント情報
+                    設定
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    onClick={() => navigateTo("/")}
+                  >
+                    ログアウト
                   </Button>
                 </Stack>
               </Drawer.Body>

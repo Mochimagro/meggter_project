@@ -1,22 +1,13 @@
-import { Container } from "@chakra-ui/react";
-import EventListCard from "../components/EventListCard";
-import { useEvents } from "@/features/events/useEvents";
+import AddEventButton from "@/components/AddEventButton";
+import EventListContent from "@/components/EventListContent";
+import { Header } from "@/components/Header";
 
 export default function EventList() {
-  const events = useEvents();
-
-  if (!events) return <p>読み込み中…</p>;
-
   return (
-    <Container as="main" py={8}>
-      {events.map((event) => (
-        <EventListCard
-          key={event.id}
-          id={event.id}
-          title={event.name}
-          date={event.eventDate}
-        />
-      ))}
-    </Container>
+    <>
+      <Header pageName="イベント管理" />
+      <EventListContent />
+      <AddEventButton />
+    </>
   );
 }

@@ -1,12 +1,12 @@
 import { Header } from "@/components/Header";
-import EventList from "./EventList";
 import AddEventButton from "@/components/AddEventButton";
+import EventListContent from "@/components/EventListContent";
 
 export default function TopPage() {
   return (
     <>
       <Header pageName="トップ"></Header>
-      <EventList></EventList>
+      <EventListContent excludePastEvents />
       <AddEventButton />
     </>
   );
