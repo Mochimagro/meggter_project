@@ -18,7 +18,14 @@ import {
   updateWishlistItem,
 } from "@/db/recordMutations";
 
-type CircleItemCardProps = BookCardProps & { visitActions?: boolean };
+type CircleItemCardProps = BookCardProps & {
+  visitActions?: boolean;
+  visited?: boolean;
+  onStatusChange?: (
+    itemId: string,
+    status: WishlistItemStatus,
+  ) => Promise<void>;
+};
 
 const wishlistItemStatuses: {
   value: WishlistItemStatus;
@@ -37,6 +44,8 @@ export default function CircleItemCard({
   price,
   status,
   visitActions = false,
+  visited = false,
+  onStatusChange,
 }: CircleItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [itemTitle, setItemTitle] = useState(title);
@@ -108,14 +117,18 @@ export default function CircleItemCard({
   };
 
   const handleStatusChange = async (nextStatus: WishlistItemStatus) => {
-    if (isStatusSubmitting || nextStatus === status) {
+    if (visited || isStatusSubmitting || nextStatus === status) {
       return;
     }
 
     setIsStatusSubmitting(true);
     setVisitError("");
     try {
-      await setWishlistItemStatus(id, nextStatus);
+      if (onStatusChange) {
+        await onStatusChange(id, nextStatus);
+      } else {
+        await setWishlistItemStatus(id, nextStatus);
+      }
     } catch (error) {
       console.error("アイテムの入手状態更新に失敗しました。", error);
       setVisitError("状態を更新できませんでした。再度お試しください。");
@@ -252,6 +265,7 @@ export default function CircleItemCard({
       )}
       {visitActions && (
         <Card.Footer justifyContent="flex-end" flexWrap="wrap">
+          {/*
           <Button
             type="button"
             aria-pressed={status === "venue_acquired"}
@@ -262,16 +276,25 @@ export default function CircleItemCard({
           >
             入手
           </Button>
-          <Button
-            type="button"
-            aria-pressed={status === "venue_unacquired"}
-            variant={status === "venue_unacquired" ? "solid" : "outline"}
-            colorPalette="red"
-            onClick={() => void handleStatusChange("venue_unacquired")}
-            disabled={isStatusSubmitting || status === "venue_unacquired"}
-          >
-            完売
-          </Button>
+          */}
+          {visited ? null : (
+            <Button
+              type="button"
+              aria-pressed={status === "venue_unacquired"}
+              variant={status === "venue_unacquired" ? "solid" : "outline"}
+              colorPalette="red"
+              onClick={() =>
+                void handleStatusChange(
+                  status === "venue_unacquired"
+                    ? "not_acquired"
+                    : "venue_unacquired",
+                )
+              }
+              disabled={visited}
+            >
+              {status === "venue_unacquired" ? "完売取り消し" : "完売してた"}
+            </Button>
+          )}
         </Card.Footer>
       )}
     </Card.Root>

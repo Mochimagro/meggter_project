@@ -1,9 +1,11 @@
 import { Button, Card, Flex, Heading, Stack, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";
 import {
   deferCircleVisit,
   markCircleVisited,
+  setWishlistItemStatus,
   undoCircleVisit,
 } from "@/db/recordMutations";
 import CircleItemCard from "./CircleItemCard";
@@ -20,8 +22,14 @@ export default function EventVisitCircleCard({
 }: EventVisitCircleCardProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const isSubmittingRef = useRef(false);
 
   const updateVisit = async (action: typeof markCircleVisited) => {
+    if (isSubmittingRef.current) {
+      return;
+    }
+
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setError("");
     try {
@@ -30,6 +38,25 @@ export default function EventVisitCircleCard({
       console.error("サークルの巡回状態更新に失敗しました。", cause);
       setError("状態を更新できませんでした。再度お試しください。");
     } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateItemStatus = async (
+    itemId: string,
+    status: WishlistItemStatus,
+  ) => {
+    if (isSubmittingRef.current) {
+      return;
+    }
+
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+    try {
+      await setWishlistItemStatus(itemId, status);
+    } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -55,11 +82,27 @@ export default function EventVisitCircleCard({
         </Flex>
       </Card.Header>
       <Card.Body opacity={visited ? 0.5 : 1}>
-        <Stack>
-          {books.map((book) => (
-            <CircleItemCard key={book.id} {...book} visitActions />
-          ))}
-        </Stack>
+        <fieldset
+          disabled={isSubmitting}
+          style={{
+            border: 0,
+            margin: 0,
+            minWidth: 0,
+            padding: 0,
+          }}
+        >
+          <Stack>
+            {books.map((book) => (
+              <CircleItemCard
+                key={book.id}
+                {...book}
+                visitActions
+                visited={visited}
+                onStatusChange={updateItemStatus}
+              />
+            ))}
+          </Stack>
+        </fieldset>
       </Card.Body>
       <Card.Footer justifyContent="flex-end" flexWrap="wrap">
         {error && (

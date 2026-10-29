@@ -241,12 +241,14 @@ export async function markCircleVisited(circleVisitId: string) {
         .where("circleVisitId")
         .equals(circleVisitId)
         .toArray();
-      const updatedItems = items.map((item): WishlistItem => ({
-        ...item,
-        status: "venue_acquired",
-        purchasedAt: now,
-        updatedAt: now,
-      }));
+      const updatedItems = items
+        .filter((item) => item.status === "not_acquired")
+        .map((item): WishlistItem => ({
+          ...item,
+          status: "venue_acquired",
+          purchasedAt: now,
+          updatedAt: now,
+        }));
 
       await db.circle_visits.bulkPut(updatedVisits);
       await db.wishlist_items.bulkPut(updatedItems);
