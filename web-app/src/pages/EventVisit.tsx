@@ -1,5 +1,5 @@
-import { Container, Heading, Stack, Text } from "@chakra-ui/react";
-import { useParams } from "react-router";
+import { Container, Heading, Stack, Text, Button } from "@chakra-ui/react";
+import { useParams, useNavigate } from "react-router";
 import { Header } from "@/components/Header";
 import EventVisitCircleCard from "@/components/EventVisitCircleCard";
 import { useEventInfo } from "@/features/events/useEventInfo";
@@ -7,6 +7,7 @@ import { useEventInfo } from "@/features/events/useEventInfo";
 export default function EventVisit() {
   const { eventId } = useParams<{ eventId: string }>();
   const event = useEventInfo(eventId);
+  const navigate = useNavigate();
 
   if (!eventId) {
     return <p>イベントが見つかりません。</p>;
@@ -31,6 +32,17 @@ export default function EventVisit() {
           {event.circles.map((circle) => (
             <EventVisitCircleCard key={circle.circleVisitId} {...circle} />
           ))}
+        </Stack>
+        <Stack justifyContent="flex-end" flexWrap="wrap" py={8}>
+          <Button
+            type="button"
+            colorPalette="orange"
+            onClick={() =>
+              navigate(`/events/${encodeURIComponent(eventId)}/result`)
+            }
+          >
+            戦場を去る
+          </Button>
         </Stack>
       </Container>
     </>

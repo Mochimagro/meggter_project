@@ -20,7 +20,9 @@ import {
 
 type CircleItemCardProps = BookCardProps & {
   visitActions?: boolean;
+  resultActions?: boolean;
   visited?: boolean;
+  disabled?: boolean;
   onStatusChange?: (
     itemId: string,
     status: WishlistItemStatus,
@@ -44,7 +46,9 @@ export default function CircleItemCard({
   price,
   status,
   visitActions = false,
+  resultActions = false,
   visited = false,
+  disabled = false,
   onStatusChange,
 }: CircleItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -117,7 +121,7 @@ export default function CircleItemCard({
   };
 
   const handleStatusChange = async (nextStatus: WishlistItemStatus) => {
-    if (visited || isStatusSubmitting || nextStatus === status) {
+    if (disabled || visited || isStatusSubmitting || nextStatus === status) {
       return;
     }
 
@@ -146,7 +150,7 @@ export default function CircleItemCard({
           : "colorPalette"
       }
     >
-      {!visitActions && (
+      {!visitActions && !resultActions && (
         <Flex position="absolute" top={2} right={2}>
           {isEditing ? (
             <Button
@@ -205,7 +209,7 @@ export default function CircleItemCard({
           </>
         )}
       </Card.Header>
-      {!isEditing && (
+      {!isEditing && !visitActions && !resultActions && (
         <Card.Body paddingTop={0}>
           <label>
             <Text as="span" marginRight={2}>
@@ -295,6 +299,32 @@ export default function CircleItemCard({
               {status === "venue_unacquired" ? "完売取り消し" : "完売してた"}
             </Button>
           )}
+        </Card.Footer>
+      )}
+      {resultActions && (
+        <Card.Footer justifyContent="flex-end" flexWrap="wrap">
+          {visitError && (
+            <Text role="alert" color="red.600" marginRight="auto">
+              {visitError}
+            </Text>
+          )}
+          <Button
+            type="button"
+            colorPalette="green"
+            onClick={() => void handleStatusChange("online_purchased")}
+            disabled={disabled || isStatusSubmitting}
+          >
+            通販で買う
+          </Button>
+          <Button
+            type="button"
+            colorPalette="gray"
+            variant="outline"
+            onClick={() => void handleStatusChange("not_acquired")}
+            disabled={disabled || isStatusSubmitting}
+          >
+            逃す
+          </Button>
         </Card.Footer>
       )}
     </Card.Root>
