@@ -7,7 +7,7 @@ import CirlceList from "./pages/CircleList";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<TopPage />} />
         <Route path="/events" element={<EventList />} />
