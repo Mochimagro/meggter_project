@@ -45,6 +45,7 @@ export async function seedEventsIfEmpty() {
 
   const event: Event = {
     id: eventId,
+    status: "planned",
     userId: null,
     name: "コミックマーケット105",
     eventDate: "2026-12-30",

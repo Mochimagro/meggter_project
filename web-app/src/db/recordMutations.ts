@@ -49,6 +49,25 @@ export async function updateEvent(
   });
 }
 
+export async function withdrawEvent(eventId: string) {
+  await db.transaction("rw", [db.events, db.sync_queue], async () => {
+    const event = await db.events.get(eventId);
+    if (!event) {
+      throw new Error("イベントが見つかりません。");
+    }
+
+    const updatedEvent: Event = {
+      ...event,
+      status: "withdrawn",
+      updatedAt: new Date().toISOString(),
+    };
+    await db.events.put(updatedEvent);
+    await db.sync_queue.add(
+      createSyncQueueItem("events", eventId, "update", updatedEvent),
+    );
+  });
+}
+
 export async function deleteEvent(eventId: string) {
   await db.transaction(
     "rw",

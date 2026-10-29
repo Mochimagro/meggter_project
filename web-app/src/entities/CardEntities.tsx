@@ -1,4 +1,4 @@
-import type { WishlistItemStatus } from "@/db/database";
+import type { EventStatus, WishlistItemStatus } from "@/db/database";
 
 export type EventListProps = { events: EventInfoCardProps[] };
 
@@ -7,6 +7,7 @@ export type EventListCardProps = Pick<
   "title" | "date" | "venue"
 > & {
   id: string;
+  status: EventStatus;
 };
 
 export type EventInfoCardProps = {

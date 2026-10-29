@@ -24,6 +24,7 @@ export default function EventListContent({
           title={event.name}
           date={event.eventDate}
           venue={event.venue}
+          status={event.status}
         />
       ))}
     </Container>

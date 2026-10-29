@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 
 export type VisitStatus = "want_to_visit" | "visited" | "skipped";
+export type EventStatus = "planned" | "withdrawn";
 export type WishlistItemStatus =
   | "not_acquired"
   | "venue_acquired"
@@ -23,6 +24,7 @@ export interface User {
 
 export interface Event {
   id: string;
+  status: EventStatus;
   userId: string | null;
   name: string;
   eventDate: string;
@@ -548,5 +550,43 @@ db.version(8)
       delete record.soldOut;
       record.status = status;
       await syncQueueTable.update(queueItem.id, { payload });
+    }
+  });
+
+db.version(9)
+  .stores({
+    users: "id, email, name, createdAt",
+    events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+    circles: "id, circleName, penName, genre, createdAt, updatedAt",
+    circle_visits:
+      "id, eventId, circleId, priority, &[eventId+priority], space, visitedAt, status",
+    wishlist_items:
+      "id, circleId, circleVisitId, title, type, status, purchasedAt, createdAt, updatedAt",
+    sync_queue:
+      "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+  })
+  .upgrade(async (transaction) => {
+    const eventTable = transaction.table("events");
+    const events = await eventTable.toArray();
+    for (const event of events) {
+      await eventTable.update(event.id, { status: "planned" });
+    }
+
+    const syncQueueTable = transaction.table("sync_queue");
+    const eventQueueItems = await syncQueueTable
+      .where("entity")
+      .equals("events")
+      .toArray();
+    for (const queueItem of eventQueueItems) {
+      const payload = queueItem.payload;
+      if (!payload || typeof payload !== "object") {
+        continue;
+      }
+
+      const record = payload as Record<string, unknown>;
+      if (!("status" in record)) {
+        record.status = "planned";
+        await syncQueueTable.update(queueItem.id, { payload });
+      }
     }
   });

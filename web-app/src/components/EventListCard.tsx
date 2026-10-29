@@ -33,6 +33,7 @@ export default function EventListCard({
   title,
   date,
   venue,
+  status,
 }: EventListCardProps) {
   const isoDate = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   const japaneseDate = date.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日$/);
@@ -45,6 +46,7 @@ export default function EventListCard({
   const isValidEventDate = parsedDate !== null && isValid(parsedDate);
   const isEventToday = isValidEventDate && isToday(parsedDate);
   const isPastEvent = isValidEventDate && isBefore(parsedDate, startOfToday());
+  const shouldShowResult = status === "withdrawn" || isPastEvent;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [eventName, setEventName] = useState(title);
@@ -193,9 +195,15 @@ export default function EventListCard({
           top={3}
           left={3}
           fontWeight="bold"
-          color={isPastEvent ? "green.600" : "gray.600"}
+          color={status === "withdrawn" || isPastEvent ? "green.600" : "gray.600"}
         >
-          {isPastEvent ? "終了" : isEventToday ? "当日" : "開催前"}
+          {status === "withdrawn"
+            ? "撤退済み"
+            : isPastEvent
+              ? "終了"
+              : isEventToday
+                ? "当日"
+                : "開催前"}
         </Text>
       </Card.Body>
       <Card.Footer justifyContent="flex-end">
@@ -223,6 +231,17 @@ export default function EventListCard({
               {isSubmitting ? "更新中..." : "更新"}
             </Button>
           </>
+        ) : shouldShowResult ? (
+          <Button
+            type="button"
+            onClick={() =>
+              navigate(`/events/${encodeURIComponent(id)}/result`)
+            }
+            margin="4px"
+            backgroundColor="green.600"
+          >
+            結果
+          </Button>
         ) : isEventToday ? (
           <Button
             type="button"

@@ -10,6 +10,7 @@ export function useAddEvent() {
     const now = new Date().toISOString();
     const event: Event = {
       id: crypto.randomUUID(),
+      status: "planned",
       userId: null,
       name: newEvent.name.trim(),
       eventDate: newEvent.eventDate,
