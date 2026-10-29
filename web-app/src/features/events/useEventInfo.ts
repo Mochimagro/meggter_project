@@ -66,6 +66,8 @@ export function useEventInfo(eventId: string | undefined) {
             id: book.id,
             title: book.title,
             price: book.price,
+            purchased: book.purchased,
+            soldOut: book.soldOut,
           })),
         }];
       }),

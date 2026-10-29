@@ -35,4 +35,6 @@ export type BookCardProps = {
   id: string;
   title: string;
   price: number | null;
+  purchased: boolean;
+  soldOut: boolean;
 };

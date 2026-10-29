@@ -31,6 +31,7 @@ export function useAddWishlistItem() {
           price: newItem.price,
           quantity: 1,
           purchased: false,
+          soldOut: false,
           purchasedAt: null,
           memo: null,
           createdAt: now,

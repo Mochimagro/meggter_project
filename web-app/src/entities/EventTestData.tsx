@@ -16,8 +16,20 @@ export const events: EventListProps = {
           space: "A-01",
           totalPrice: 1000,
           books: [
-            { id: "sakura-bunko-book-1", title: "春色の手紙", price: 500 },
-            { id: "sakura-bunko-book-2", title: "桜の街を歩いて", price: 500 },
+            {
+              id: "sakura-bunko-book-1",
+              title: "春色の手紙",
+              price: 500,
+              purchased: false,
+              soldOut: false,
+            },
+            {
+              id: "sakura-bunko-book-2",
+              title: "桜の街を歩いて",
+              price: 500,
+              purchased: false,
+              soldOut: false,
+            },
           ],
         },
       ],
@@ -36,11 +48,19 @@ export const events: EventListProps = {
           space: "B-12",
           totalPrice: 1500,
           books: [
-            { id: "aozora-atelier-book-1", title: "青空スケッチ", price: 1000 },
+            {
+              id: "aozora-atelier-book-1",
+              title: "青空スケッチ",
+              price: 1000,
+              purchased: false,
+              soldOut: false,
+            },
             {
               id: "aozora-atelier-book-2",
               title: "夏の小さな物語",
               price: 500,
+              purchased: false,
+              soldOut: false,
             },
           ],
         },
@@ -60,7 +80,13 @@ export const events: EventListProps = {
           space: "C-03",
           totalPrice: 800,
           books: [
-            { id: "tsukiyo-shobo-book-1", title: "月夜の読書会", price: 800 },
+            {
+              id: "tsukiyo-shobo-book-1",
+              title: "月夜の読書会",
+              price: 800,
+              purchased: false,
+              soldOut: false,
+            },
           ],
         },
       ],

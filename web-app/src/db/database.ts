@@ -59,6 +59,7 @@ export interface WishlistItem {
   price: number | null;
   quantity: number;
   purchased: boolean;
+  soldOut: boolean;
   purchasedAt: string | null;
   memo: string | null;
   createdAt: string;
@@ -446,6 +447,43 @@ db.version(6)
         record.circleURL = record.circleURL ?? record.mapUrl ?? null;
         delete record.mapUrl;
         await syncQueueTable.update(item.id, { payload });
+      }
+    }
+  });
+
+db.version(7)
+  .stores({
+    users: "id, email, name, createdAt",
+    events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+    circles: "id, circleName, penName, genre, createdAt, updatedAt",
+    circle_visits:
+      "id, eventId, circleId, priority, &[eventId+priority], space, visitedAt, status",
+    wishlist_items:
+      "id, circleId, circleVisitId, title, type, purchased, purchasedAt, createdAt, updatedAt",
+    sync_queue:
+      "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+  })
+  .upgrade(async (transaction) => {
+    const wishlistTable = transaction.table("wishlist_items");
+    const items = await wishlistTable.toArray();
+    for (const item of items) {
+      await wishlistTable.update(item.id, { soldOut: false });
+    }
+
+    const syncQueueTable = transaction.table("sync_queue");
+    const syncQueueItems = await syncQueueTable
+      .where("entity")
+      .equals("wishlist_items")
+      .toArray();
+    for (const queueItem of syncQueueItems) {
+      const payload = queueItem.payload;
+      if (!payload || typeof payload !== "object") {
+        continue;
+      }
+      const record = payload as Record<string, unknown>;
+      if (!("soldOut" in record)) {
+        record.soldOut = false;
+        await syncQueueTable.update(queueItem.id, { payload });
       }
     }
   });

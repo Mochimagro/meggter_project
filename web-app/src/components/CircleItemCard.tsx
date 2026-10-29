@@ -1,14 +1,32 @@
-import { Button, Card, Field, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  Field,
+  Flex,
+  Heading,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import type { BookCardProps } from "../entities/CardEntities";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import {
   deleteWishlistItem,
+  setWishlistItemOutcome,
   updateWishlistItem,
 } from "@/db/recordMutations";
 
-export default function CircleItemCard({ id, title, price }: BookCardProps) {
+type CircleItemCardProps = BookCardProps & { visitActions?: boolean };
+
+export default function CircleItemCard({
+  id,
+  title,
+  price,
+  purchased,
+  soldOut,
+  visitActions = false,
+}: CircleItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [itemTitle, setItemTitle] = useState(title);
   const [itemPrice, setItemPrice] = useState(
@@ -16,6 +34,7 @@ export default function CircleItemCard({ id, title, price }: BookCardProps) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editError, setEditError] = useState("");
+  const [visitError, setVisitError] = useState("");
   const parsedPrice = itemPrice === "" ? null : Number(itemPrice);
   const canUpdate =
     itemTitle.trim().length > 0 &&
@@ -76,32 +95,44 @@ export default function CircleItemCard({ id, title, price }: BookCardProps) {
     }
   };
 
+  const handleOutcome = async (outcome: "purchased" | "soldOut") => {
+    setVisitError("");
+    try {
+      await setWishlistItemOutcome(id, outcome);
+    } catch (error) {
+      console.error("アイテムの巡回状態更新に失敗しました。", error);
+      setVisitError("状態を更新できませんでした。再度お試しください。");
+    }
+  };
+
   return (
     <Card.Root position="relative">
-      <Flex position="absolute" top={2} right={2}>
-        {isEditing ? (
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={handleCancelEditing}
-            disabled={isSubmitting}
-          >
-            キャンセル
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            aria-label="購入予定アイテムを編集"
-            title="編集"
-            onClick={handleStartEditing}
-          >
-            <HiOutlinePencilSquare />
-          </Button>
-        )}
-      </Flex>
+      {!visitActions && (
+        <Flex position="absolute" top={2} right={2}>
+          {isEditing ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleCancelEditing}
+              disabled={isSubmitting}
+            >
+              キャンセル
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              aria-label="購入予定アイテムを編集"
+              title="編集"
+              onClick={handleStartEditing}
+            >
+              <HiOutlinePencilSquare />
+            </Button>
+          )}
+        </Flex>
+      )}
       <Card.Header paddingTop={10}>
         {isEditing ? (
           <>
@@ -157,6 +188,35 @@ export default function CircleItemCard({ id, title, price }: BookCardProps) {
             disabled={!canUpdate || isSubmitting}
           >
             {isSubmitting ? "更新中..." : "更新"}
+          </Button>
+        </Card.Footer>
+      )}
+      {visitActions && (
+        <Card.Footer justifyContent="flex-end" flexWrap="wrap">
+          {visitError && (
+            <Text role="alert" color="red.600" marginRight="auto">
+              {visitError}
+            </Text>
+          )}
+          <Button
+            type="button"
+            aria-pressed={purchased}
+            variant={purchased ? "solid" : "outline"}
+            colorPalette="green"
+            onClick={() => handleOutcome("purchased")}
+            disabled={purchased}
+          >
+            入手
+          </Button>
+          <Button
+            type="button"
+            aria-pressed={soldOut}
+            variant={soldOut ? "solid" : "outline"}
+            colorPalette="red"
+            onClick={() => handleOutcome("soldOut")}
+            disabled={soldOut}
+          >
+            完売
           </Button>
         </Card.Footer>
       )}

@@ -180,6 +180,161 @@ export async function updateWishlistItem(
   });
 }
 
+export async function setWishlistItemOutcome(
+  itemId: string,
+  outcome: "purchased" | "soldOut",
+) {
+  await db.transaction("rw", [db.wishlist_items, db.sync_queue], async () => {
+    const item = await db.wishlist_items.get(itemId);
+    if (!item) {
+      throw new Error("購入予定アイテムが見つかりません。");
+    }
+
+    const now = new Date().toISOString();
+    const updatedItem: WishlistItem = {
+      ...item,
+      purchased: outcome === "purchased",
+      soldOut: outcome === "soldOut",
+      purchasedAt: outcome === "purchased" ? now : null,
+      updatedAt: now,
+    };
+    await db.wishlist_items.put(updatedItem);
+    await db.sync_queue.add(
+      createSyncQueueItem("wishlist_items", itemId, "update", updatedItem),
+    );
+  });
+}
+
+export async function markCircleVisited(circleVisitId: string) {
+  await db.transaction(
+    "rw",
+    [db.circle_visits, db.wishlist_items, db.sync_queue],
+    async () => {
+      const visit = await db.circle_visits.get(circleVisitId);
+      if (!visit) {
+        throw new Error("イベント内のサークル情報が見つかりません。");
+      }
+
+      const now = new Date().toISOString();
+      const visits = await db.circle_visits
+        .where("eventId")
+        .equals(visit.eventId)
+        .sortBy("priority");
+      const reorderedVisits = [
+        ...visits.filter((entry) => entry.id !== circleVisitId),
+        visit,
+      ];
+      await setVisitPriorities(reorderedVisits);
+      const updatedVisits = reorderedVisits.map(
+        (entry, index): CircleVisit => ({
+          ...entry,
+          priority: index + 1,
+          ...(entry.id === circleVisitId
+            ? { status: "visited" as const, visitedAt: now }
+            : {}),
+        }),
+      );
+      const items = await db.wishlist_items
+        .where("circleVisitId")
+        .equals(circleVisitId)
+        .toArray();
+      const updatedItems = items.map((item): WishlistItem => ({
+        ...item,
+        purchased: true,
+        soldOut: false,
+        purchasedAt: now,
+        updatedAt: now,
+      }));
+
+      await db.circle_visits.bulkPut(updatedVisits);
+      await db.wishlist_items.bulkPut(updatedItems);
+      await db.sync_queue.bulkAdd([
+        ...updatedVisits.map((entry) =>
+          createSyncQueueItem("circle_visits", entry.id, "update", entry),
+        ),
+        ...updatedItems.map((item) =>
+          createSyncQueueItem("wishlist_items", item.id, "update", item),
+        ),
+      ]);
+    },
+  );
+}
+
+export async function undoCircleVisit(circleVisitId: string) {
+  await db.transaction("rw", [db.circle_visits, db.sync_queue], async () => {
+    const visit = await db.circle_visits.get(circleVisitId);
+    if (!visit) {
+      throw new Error("イベント内のサークル情報が見つかりません。");
+    }
+
+    const visits = await db.circle_visits
+      .where("eventId")
+      .equals(visit.eventId)
+      .sortBy("priority");
+    const reorderedVisits = [
+      visit,
+      ...visits.filter((entry) => entry.id !== circleVisitId),
+    ];
+    await setVisitPriorities(reorderedVisits);
+    const updatedVisits = reorderedVisits.map(
+      (entry, index): CircleVisit => ({
+        ...entry,
+        priority: index + 1,
+        ...(entry.id === circleVisitId
+          ? { status: "want_to_visit" as const, visitedAt: null }
+          : {}),
+      }),
+    );
+
+    await db.circle_visits.bulkPut(updatedVisits);
+    await db.sync_queue.bulkAdd(
+      updatedVisits.map((entry) =>
+        createSyncQueueItem("circle_visits", entry.id, "update", entry),
+      ),
+    );
+  });
+}
+
+async function setVisitPriorities(visits: CircleVisit[]) {
+  for (const [index, visit] of visits.entries()) {
+    await db.circle_visits.update(visit.id, { priority: -(index + 1) });
+  }
+}
+
+export async function deferCircleVisit(circleVisitId: string) {
+  await db.transaction("rw", [db.circle_visits, db.sync_queue], async () => {
+    const visit = await db.circle_visits.get(circleVisitId);
+    if (!visit) {
+      throw new Error("イベント内のサークル情報が見つかりません。");
+    }
+    if (visit.status === "visited") {
+      return;
+    }
+
+    const visits = await db.circle_visits
+      .where("eventId")
+      .equals(visit.eventId)
+      .sortBy("priority");
+    const reorderedVisits = [
+      ...visits.filter((entry) => entry.id !== circleVisitId),
+      visit,
+    ];
+    await setVisitPriorities(reorderedVisits);
+
+    const updatedVisits = reorderedVisits.map((entry, index): CircleVisit => ({
+      ...entry,
+      priority: index + 1,
+      ...(entry.id === circleVisitId ? { status: "skipped" as const } : {}),
+    }));
+    await db.circle_visits.bulkPut(updatedVisits);
+    await db.sync_queue.bulkAdd(
+      updatedVisits.map((entry) =>
+        createSyncQueueItem("circle_visits", entry.id, "update", entry),
+      ),
+    );
+  });
+}
+
 export async function deleteWishlistItem(itemId: string) {
   await db.transaction("rw", [db.wishlist_items, db.sync_queue], async () => {
     const item = await db.wishlist_items.get(itemId);

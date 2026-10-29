@@ -224,7 +224,12 @@ export default function EventListCard({
             </Button>
           </>
         ) : isEventToday ? (
-          <Button margin="4px" backgroundColor={"red.500"}>
+          <Button
+            type="button"
+            margin="4px"
+            backgroundColor={"red.500"}
+            onClick={() => navigate(`/events/${encodeURIComponent(id)}/visit`)}
+          >
             巡る
           </Button>
         ) : (
