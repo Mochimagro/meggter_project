@@ -6,6 +6,7 @@ import EventInfo from "./pages/EventInfo";
 import CirlceList from "./pages/CircleList";
 import EventVisit from "./pages/EventVisit";
 import EventResult from "./pages/EventResult";
+import CircleInfo from "./pages/CircleInfo";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/events/:eventId/result" element={<EventResult />} />
         <Route path="/events/:eventId" element={<EventInfo />} />
         <Route path="/circles" element={<CirlceList />} />
+        <Route path="/circles/:circleId" element={<CircleInfo />} />
       </Routes>
     </BrowserRouter>
   );

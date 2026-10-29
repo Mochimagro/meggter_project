@@ -9,6 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import type { Circle } from "@/db/database";
 import { deleteCircle, updateCircle } from "@/db/recordMutations";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
@@ -19,6 +20,7 @@ type CircleListCardProps = {
 };
 
 export default function CircleListCard({ circle }: CircleListCardProps) {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [circleName, setCircleName] = useState(circle.circleName);
   const [penName, setPenName] = useState(circle.penName ?? "");
@@ -201,7 +203,7 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
           )}
         </Flex>
       </Card.Header>
-      {isEditing && (
+      {isEditing ? (
         <Card.Footer justifyContent="flex-end">
           {editError && (
             <Text role="alert" color="red.600" marginRight="auto">
@@ -223,6 +225,17 @@ export default function CircleListCard({ circle }: CircleListCardProps) {
             disabled={!circleName.trim() || isSubmitting}
           >
             {isSubmitting ? "更新中..." : "更新"}
+          </Button>
+        </Card.Footer>
+      ) : (
+        <Card.Footer justifyContent="flex-end">
+          <Button
+            type="button"
+            onClick={() =>
+              navigate(`/circles/${encodeURIComponent(circle.id)}`)
+            }
+          >
+            詳細
           </Button>
         </Card.Footer>
       )}
