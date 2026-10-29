@@ -1,3 +1,5 @@
+import type { WishlistItemStatus } from "@/db/database";
+
 export type EventListProps = { events: EventInfoCardProps[] };
 
 export type EventListCardProps = Pick<
@@ -35,6 +37,5 @@ export type BookCardProps = {
   id: string;
   title: string;
   price: number | null;
-  purchased: boolean;
-  soldOut: boolean;
+  status: WishlistItemStatus;
 };

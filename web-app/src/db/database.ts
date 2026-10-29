@@ -1,6 +1,12 @@
 import Dexie, { type EntityTable } from "dexie";
 
 export type VisitStatus = "want_to_visit" | "visited" | "skipped";
+export type WishlistItemStatus =
+  | "not_acquired"
+  | "venue_acquired"
+  | "venue_unacquired"
+  | "online_purchased"
+  | "given_up";
 export type SyncOperation = "create" | "update" | "delete";
 export type SyncEntity =
   | "events"
@@ -58,8 +64,7 @@ export interface WishlistItem {
   type: string | null;
   price: number | null;
   quantity: number;
-  purchased: boolean;
-  soldOut: boolean;
+  status: WishlistItemStatus;
   purchasedAt: string | null;
   memo: string | null;
   createdAt: string;
@@ -485,5 +490,63 @@ db.version(7)
         record.soldOut = false;
         await syncQueueTable.update(queueItem.id, { payload });
       }
+    }
+  });
+
+db.version(8)
+  .stores({
+    users: "id, email, name, createdAt",
+    events: "id, userId, name, eventDate, venue, createdAt, updatedAt",
+    circles: "id, circleName, penName, genre, createdAt, updatedAt",
+    circle_visits:
+      "id, eventId, circleId, priority, &[eventId+priority], space, visitedAt, status",
+    wishlist_items:
+      "id, circleId, circleVisitId, title, type, status, purchasedAt, createdAt, updatedAt",
+    sync_queue:
+      "id, clientId, entity, entityId, operation, createdAt, syncedAt",
+  })
+  .upgrade(async (transaction) => {
+    const wishlistTable = transaction.table("wishlist_items");
+    const items = await wishlistTable.toArray();
+    const statusById = new Map<string, WishlistItemStatus>();
+
+    for (const item of items) {
+      const legacyItem = item as typeof item & {
+        purchased?: boolean;
+        soldOut?: boolean;
+      };
+      const status: WishlistItemStatus = legacyItem.purchased
+        ? "venue_acquired"
+        : legacyItem.soldOut
+          ? "venue_unacquired"
+          : "not_acquired";
+      const { purchased: _purchased, soldOut: _soldOut, ...itemData } =
+        legacyItem;
+      await wishlistTable.put({ ...itemData, status });
+      statusById.set(item.id, status);
+    }
+
+    const syncQueueTable = transaction.table("sync_queue");
+    const syncQueueItems = await syncQueueTable
+      .where("entity")
+      .equals("wishlist_items")
+      .toArray();
+    for (const queueItem of syncQueueItems) {
+      const payload = queueItem.payload;
+      if (!payload || typeof payload !== "object") {
+        continue;
+      }
+
+      const record = payload as Record<string, unknown>;
+      const status =
+        record.purchased === true
+          ? "venue_acquired"
+          : record.soldOut === true
+            ? "venue_unacquired"
+            : statusById.get(queueItem.entityId) ?? "not_acquired";
+      delete record.purchased;
+      delete record.soldOut;
+      record.status = status;
+      await syncQueueTable.update(queueItem.id, { payload });
     }
   });

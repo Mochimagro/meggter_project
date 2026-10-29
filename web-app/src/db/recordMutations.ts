@@ -6,6 +6,7 @@ import {
   type SyncEntity,
   type SyncQueueItem,
   type WishlistItem,
+  type WishlistItemStatus,
 } from "@/db/database";
 
 function createSyncQueueItem(
@@ -180,9 +181,9 @@ export async function updateWishlistItem(
   });
 }
 
-export async function setWishlistItemOutcome(
+export async function setWishlistItemStatus(
   itemId: string,
-  outcome: "purchased" | "soldOut",
+  status: WishlistItemStatus,
 ) {
   await db.transaction("rw", [db.wishlist_items, db.sync_queue], async () => {
     const item = await db.wishlist_items.get(itemId);
@@ -193,9 +194,11 @@ export async function setWishlistItemOutcome(
     const now = new Date().toISOString();
     const updatedItem: WishlistItem = {
       ...item,
-      purchased: outcome === "purchased",
-      soldOut: outcome === "soldOut",
-      purchasedAt: outcome === "purchased" ? now : null,
+      status,
+      purchasedAt:
+        status === "venue_acquired" || status === "online_purchased"
+          ? now
+          : null,
       updatedAt: now,
     };
     await db.wishlist_items.put(updatedItem);
@@ -240,8 +243,7 @@ export async function markCircleVisited(circleVisitId: string) {
         .toArray();
       const updatedItems = items.map((item): WishlistItem => ({
         ...item,
-        purchased: true,
-        soldOut: false,
+        status: "venue_acquired",
         purchasedAt: now,
         updatedAt: now,
       }));

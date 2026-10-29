@@ -9,22 +9,33 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import type { BookCardProps } from "../entities/CardEntities";
+import type { WishlistItemStatus } from "@/db/database";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import {
   deleteWishlistItem,
-  setWishlistItemOutcome,
+  setWishlistItemStatus,
   updateWishlistItem,
 } from "@/db/recordMutations";
 
 type CircleItemCardProps = BookCardProps & { visitActions?: boolean };
 
+const wishlistItemStatuses: {
+  value: WishlistItemStatus;
+  label: string;
+}[] = [
+  { value: "not_acquired", label: "未入手" },
+  { value: "venue_acquired", label: "会場入手済" },
+  { value: "venue_unacquired", label: "会場未入手" },
+  { value: "online_purchased", label: "通販購入済" },
+  { value: "given_up", label: "諦める" },
+];
+
 export default function CircleItemCard({
   id,
   title,
   price,
-  purchased,
-  soldOut,
+  status,
   visitActions = false,
 }: CircleItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -33,6 +44,7 @@ export default function CircleItemCard({
     price === null ? "" : String(price),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isStatusSubmitting, setIsStatusSubmitting] = useState(false);
   const [editError, setEditError] = useState("");
   const [visitError, setVisitError] = useState("");
   const parsedPrice = itemPrice === "" ? null : Number(itemPrice);
@@ -95,18 +107,32 @@ export default function CircleItemCard({
     }
   };
 
-  const handleOutcome = async (outcome: "purchased" | "soldOut") => {
+  const handleStatusChange = async (nextStatus: WishlistItemStatus) => {
+    if (isStatusSubmitting || nextStatus === status) {
+      return;
+    }
+
+    setIsStatusSubmitting(true);
     setVisitError("");
     try {
-      await setWishlistItemOutcome(id, outcome);
+      await setWishlistItemStatus(id, nextStatus);
     } catch (error) {
-      console.error("アイテムの巡回状態更新に失敗しました。", error);
+      console.error("アイテムの入手状態更新に失敗しました。", error);
       setVisitError("状態を更新できませんでした。再度お試しください。");
+    } finally {
+      setIsStatusSubmitting(false);
     }
   };
 
   return (
-    <Card.Root position="relative">
+    <Card.Root
+      position="relative"
+      background={
+        status === "venue_acquired" || status === "online_purchased"
+          ? "gray.500"
+          : "colorPalette"
+      }
+    >
       {!visitActions && (
         <Flex position="absolute" top={2} right={2}>
           {isEditing ? (
@@ -166,6 +192,39 @@ export default function CircleItemCard({
           </>
         )}
       </Card.Header>
+      {!isEditing && (
+        <Card.Body paddingTop={0}>
+          <label>
+            <Text as="span" marginRight={2}>
+              入手状態
+            </Text>
+            <select
+              aria-label={`${title}の入手状態`}
+              value={status}
+              disabled={isStatusSubmitting}
+              onChange={(event) => {
+                const nextStatus = wishlistItemStatuses.find(
+                  (option) => option.value === event.target.value,
+                );
+                if (nextStatus) {
+                  void handleStatusChange(nextStatus.value);
+                }
+              }}
+            >
+              {wishlistItemStatuses.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {visitError && (
+            <Text role="alert" color="red.600">
+              {visitError}
+            </Text>
+          )}
+        </Card.Body>
+      )}
       {isEditing && (
         <Card.Footer justifyContent="flex-end">
           {editError && (
@@ -193,28 +252,23 @@ export default function CircleItemCard({
       )}
       {visitActions && (
         <Card.Footer justifyContent="flex-end" flexWrap="wrap">
-          {visitError && (
-            <Text role="alert" color="red.600" marginRight="auto">
-              {visitError}
-            </Text>
-          )}
           <Button
             type="button"
-            aria-pressed={purchased}
-            variant={purchased ? "solid" : "outline"}
+            aria-pressed={status === "venue_acquired"}
+            variant={status === "venue_acquired" ? "solid" : "outline"}
             colorPalette="green"
-            onClick={() => handleOutcome("purchased")}
-            disabled={purchased}
+            onClick={() => void handleStatusChange("venue_acquired")}
+            disabled={isStatusSubmitting || status === "venue_acquired"}
           >
             入手
           </Button>
           <Button
             type="button"
-            aria-pressed={soldOut}
-            variant={soldOut ? "solid" : "outline"}
+            aria-pressed={status === "venue_unacquired"}
+            variant={status === "venue_unacquired" ? "solid" : "outline"}
             colorPalette="red"
-            onClick={() => handleOutcome("soldOut")}
-            disabled={soldOut}
+            onClick={() => void handleStatusChange("venue_unacquired")}
+            disabled={isStatusSubmitting || status === "venue_unacquired"}
           >
             完売
           </Button>
