@@ -1,9 +1,10 @@
 import { Container, Heading, Stack, Text } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams } from "react-router";
-import CircleInfoListCard from "@/components/CircleInfoListCard";
 import { Header } from "@/components/Header";
 import { db } from "@/db/database";
+import ItemCard from "@/features/item/ItemCard";
+import ItemDeleteActions from "@/features/item/ItemDeleteActions/ItemDeleteActions";
 
 export default function CircleInfo() {
   const { circleId } = useParams<{ circleId: string }>();
@@ -76,10 +77,11 @@ export default function CircleInfo() {
                   first.eventName.localeCompare(second.eventName),
               )
               .map(({ item, eventName }) => (
-                <CircleInfoListCard
+                <ItemCard
                   key={item.id}
                   item={item}
                   eventName={eventName}
+                  actions={<ItemDeleteActions itemId={item.id} />}
                 />
               ))
           )}

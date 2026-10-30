@@ -14,7 +14,7 @@ import {
   type NewWishlistItem,
 } from "@/hooks/useAddWishlistItem";
 import type { CircleCardProps } from "../entities/CardEntities";
-import CircleItemCard from "../features/item/CircleItemCard";
+import InteractiveItemCard from "../features/item/InteractiveItemCard";
 import EventCircleAddItemCard from "./EventCircleAddItemCard";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
@@ -236,7 +236,7 @@ export default function EventCircleListCard({
       <Card.Body>
         <Stack>
           {books.map((book) => (
-            <CircleItemCard key={book.id} {...book} />
+            <InteractiveItemCard key={book.id} {...book} />
           ))}
         </Stack>
       </Card.Body>

@@ -8,7 +8,7 @@ import {
   setWishlistItemStatus,
   undoCircleVisit,
 } from "@/db/recordMutations";
-import CircleItemCard from "../features/item/CircleItemCard";
+import InteractiveItemCard from "../features/item/InteractiveItemCard";
 import { semanticColors } from "@/theme/semanticColors";
 
 type EventVisitCircleCardProps = CircleCardProps;
@@ -96,7 +96,7 @@ export default function EventVisitCircleCard({
         >
           <Stack>
             {books.map((book) => (
-              <CircleItemCard
+              <InteractiveItemCard
                 key={book.id}
                 {...book}
                 visitActions

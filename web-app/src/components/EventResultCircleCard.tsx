@@ -1,7 +1,7 @@
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";
-import CircleItemCard from "../features/item/CircleItemCard";
+import InteractiveItemCard from "../features/item/InteractiveItemCard";
 
 type EventResultCircleCardProps = CircleCardProps & {
   disabled: boolean;
@@ -30,7 +30,7 @@ export default function EventResultCircleCard({
       <Card.Body>
         <Stack gap={3}>
           {books.map((book) => (
-            <CircleItemCard
+            <InteractiveItemCard
               key={book.id}
               {...book}
               resultActions

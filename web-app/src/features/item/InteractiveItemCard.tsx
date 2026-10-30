@@ -19,7 +19,7 @@ import {
 } from "@/db/recordMutations";
 import { semanticColors } from "@/theme/semanticColors";
 
-type CircleItemCardProps = BookCardProps & {
+type InteractiveItemCardProps = BookCardProps & {
   visitActions?: boolean;
   resultActions?: boolean;
   visited?: boolean;
@@ -41,7 +41,7 @@ const wishlistItemStatuses: {
   { value: "given_up", label: "諦める" },
 ];
 
-export default function CircleItemCard({
+export default function InteractiveItemCard({
   id,
   title,
   price,
@@ -51,7 +51,7 @@ export default function CircleItemCard({
   visited = false,
   disabled = false,
   onStatusChange,
-}: CircleItemCardProps) {
+}: InteractiveItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [itemTitle, setItemTitle] = useState(title);
   const [itemPrice, setItemPrice] = useState(
