@@ -16,6 +16,7 @@ import { BsMap } from "react-icons/bs";
 import { FaCalendarAlt } from "react-icons/fa";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { deleteEvent, updateEvent } from "@/db/recordMutations";
+import { semanticColors } from "@/theme/semanticColors";
 
 function toInputDate(date: string) {
   const isoDate = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -117,7 +118,11 @@ export default function EventListCard({
       position="relative"
       margin="8px"
       backgroundColor={
-        isPastEvent ? "gray.400" : isEventToday ? "red.400" : "colorPalette"
+        shouldShowResult
+          ? semanticColors.negative.card
+          : isEventToday
+            ? semanticColors.hot.card
+            : "colorPalette"
       }
     >
       <Card.Header>
@@ -195,7 +200,9 @@ export default function EventListCard({
           top={3}
           left={3}
           fontWeight="bold"
-          color={status === "withdrawn" || isPastEvent ? "green.600" : "gray.600"}
+          color={
+            shouldShowResult ? semanticColors.negative.text : "gray.600"
+          }
         >
           {status === "withdrawn"
             ? "撤退済み"
@@ -238,7 +245,7 @@ export default function EventListCard({
               navigate(`/events/${encodeURIComponent(id)}/result`)
             }
             margin="4px"
-            backgroundColor="green.600"
+            backgroundColor={semanticColors.negative.button}
           >
             結果
           </Button>
@@ -246,7 +253,7 @@ export default function EventListCard({
           <Button
             type="button"
             margin="4px"
-            backgroundColor={"red.500"}
+            backgroundColor={semanticColors.negative.button}
             onClick={() => navigate(`/events/${encodeURIComponent(id)}/visit`)}
           >
             巡る

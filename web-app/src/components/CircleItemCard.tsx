@@ -17,6 +17,7 @@ import {
   setWishlistItemStatus,
   updateWishlistItem,
 } from "@/db/recordMutations";
+import { semanticColors } from "@/theme/semanticColors";
 
 type CircleItemCardProps = BookCardProps & {
   visitActions?: boolean;
@@ -146,8 +147,10 @@ export default function CircleItemCard({
       position="relative"
       background={
         status === "venue_acquired" || status === "online_purchased"
-          ? "gray.500"
-          : "colorPalette"
+          ? semanticColors.positive.card
+          : status === "venue_unacquired" || status === "given_up"
+            ? semanticColors.negative.card
+            : "colorPalette"
       }
     >
       {!visitActions && !resultActions && (
@@ -285,8 +288,7 @@ export default function CircleItemCard({
             <Button
               type="button"
               aria-pressed={status === "venue_unacquired"}
-              variant={status === "venue_unacquired" ? "solid" : "outline"}
-              colorPalette="red"
+              backgroundColor={semanticColors.negative.button}
               onClick={() =>
                 void handleStatusChange(
                   status === "venue_unacquired"
@@ -310,7 +312,7 @@ export default function CircleItemCard({
           )}
           <Button
             type="button"
-            colorPalette="green"
+            backgroundColor={semanticColors.positive.button}
             onClick={() => void handleStatusChange("online_purchased")}
             disabled={disabled || isStatusSubmitting}
           >
@@ -318,8 +320,7 @@ export default function CircleItemCard({
           </Button>
           <Button
             type="button"
-            colorPalette="gray"
-            variant="outline"
+            backgroundColor={semanticColors.negative.button}
             onClick={() => void handleStatusChange("not_acquired")}
             disabled={disabled || isStatusSubmitting}
           >

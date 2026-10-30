@@ -9,6 +9,7 @@ import {
   undoCircleVisit,
 } from "@/db/recordMutations";
 import CircleItemCard from "./CircleItemCard";
+import { semanticColors } from "@/theme/semanticColors";
 
 type EventVisitCircleCardProps = CircleCardProps;
 
@@ -62,7 +63,9 @@ export default function EventVisitCircleCard({
   };
 
   return (
-    <Card.Root>
+    <Card.Root
+      backgroundColor={visited ? semanticColors.positive.card : undefined}
+    >
       <Card.Header opacity={visited ? 0.5 : 1}>
         <Flex justify="space-between" align="start" gap={3} flexWrap="wrap">
           <Stack gap={1}>
@@ -74,7 +77,7 @@ export default function EventVisitCircleCard({
           </Stack>
           <Text
             fontWeight="bold"
-            color={visited ? "green.600" : "gray.600"}
+            color={visited ? semanticColors.positive.text : "gray.600"}
             aria-live="polite"
           >
             {visited ? "巡回済み" : "未巡回"}
@@ -133,7 +136,7 @@ export default function EventVisitCircleCard({
             </Button>
             <Button
               type="button"
-              colorPalette="green"
+              backgroundColor={semanticColors.positive.button}
               onClick={() => void updateVisit(markCircleVisited)}
               disabled={isSubmitting}
             >

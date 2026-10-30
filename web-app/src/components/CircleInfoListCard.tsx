@@ -2,6 +2,7 @@ import { Button, Card, Flex, Heading, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import type { WishlistItem, WishlistItemStatus } from "@/db/database";
 import { deleteWishlistItem } from "@/db/recordMutations";
+import { semanticColors } from "@/theme/semanticColors";
 
 type CircleInfoListCardProps = {
   item: WishlistItem;
@@ -43,7 +44,15 @@ export default function CircleInfoListCard({
   };
 
   return (
-    <Card.Root>
+    <Card.Root
+      backgroundColor={
+        item.status === "venue_acquired" || item.status === "online_purchased"
+          ? semanticColors.positive.card
+          : item.status === "venue_unacquired" || item.status === "given_up"
+            ? semanticColors.negative.card
+            : undefined
+      }
+    >
       <Card.Header>
         <Flex justify="space-between" align="start" gap={3}>
           <Heading size="md">{item.title}</Heading>
@@ -59,7 +68,19 @@ export default function CircleInfoListCard({
         </Flex>
       </Card.Header>
       <Card.Body>
-        <Text>状態: {statusLabels[item.status]}</Text>
+        <Text
+          color={
+            item.status === "venue_acquired" ||
+            item.status === "online_purchased"
+              ? semanticColors.positive.text
+              : item.status === "venue_unacquired" ||
+                  item.status === "given_up"
+                ? semanticColors.negative.text
+                : undefined
+          }
+        >
+          状態: {statusLabels[item.status]}
+        </Text>
         <Text>頒布イベント: {eventName}</Text>
         {error && (
           <Text role="alert" color="red.600">

@@ -20,6 +20,7 @@ import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { deleteEventCircle, updateEventCircle } from "@/db/recordMutations";
 import { normalizeExternalUrl } from "@/utils/externalUrl";
+import { semanticColors } from "@/theme/semanticColors";
 
 export default function EventCircleListCard({
   id,
@@ -124,6 +125,7 @@ export default function EventCircleListCard({
   return (
     <Card.Root
       position="relative"
+      backgroundColor={visited ? semanticColors.positive.card : undefined}
       className={isEntering ? "circle-card-enter" : undefined}
       onAnimationEnd={onAnimationEnd}
     >
@@ -227,7 +229,7 @@ export default function EventCircleListCard({
         top={3}
         left={3}
         fontWeight="bold"
-        color={visited ? "green.600" : "gray.600"}
+        color={visited ? semanticColors.positive.text : "gray.600"}
       >
         {visited ? "巡回済み" : "未巡回"}
       </Text>

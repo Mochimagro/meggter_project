@@ -1,6 +1,7 @@
 import { Box, Heading, Stack, Text } from "@chakra-ui/react";
 import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";
+import { semanticColors } from "@/theme/semanticColors";
 
 type EventResultCheckedItemListProps = {
   circles: CircleCardProps[];
@@ -36,7 +37,21 @@ export default function EventResultCheckedItemList({
                 {circle.books.map((book) => (
                   <Box as="li" key={book.id}>
                     <Text>
-                      {book.title} — {statusLabels[book.status]}
+                      {book.title} —{" "}
+                      <Text
+                        as="span"
+                        color={
+                          book.status === "venue_acquired" ||
+                          book.status === "online_purchased"
+                            ? semanticColors.positive.text
+                            : book.status === "venue_unacquired" ||
+                                book.status === "given_up"
+                              ? semanticColors.negative.text
+                              : undefined
+                        }
+                      >
+                        {statusLabels[book.status]}
+                      </Text>
                     </Text>
                   </Box>
                 ))}
