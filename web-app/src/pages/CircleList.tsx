@@ -1,8 +1,10 @@
 import { Container } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Header } from "@/components/Header";
-import CircleListCard from "@/components/CircleListCard";
 import { db } from "@/db/database";
+import CircleCard from "@/features/circle/CircleCard";
+import CircleDetailLink from "@/features/circle/CircleDetailLink/CircleDetailLink";
+import CircleEditForm from "@/features/circle/CircleEditForm/CircleEditForm";
 
 export default function CirlceList() {
   const circles = useLiveQuery(() =>
@@ -19,7 +21,13 @@ export default function CirlceList() {
           <p>サークルはまだ登録されていません。</p>
         ) : (
           circles.map((circle) => (
-            <CircleListCard key={circle.id} circle={circle} />
+            <CircleCard
+              key={circle.id}
+              circle={circle}
+              actions={<CircleDetailLink circleId={circle.id} />}
+            >
+              <CircleEditForm circle={circle} />
+            </CircleCard>
           ))
         )}
       </Container>
