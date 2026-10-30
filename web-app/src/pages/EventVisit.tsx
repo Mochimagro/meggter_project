@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import EventVisitCircleCard from "@/components/EventVisitCircleCard";
 import { withdrawEvent } from "@/db/recordMutations";
-import { useEventInfo } from "@/features/events/useEventInfo";
+import { useEventInfo } from "@/hooks/useEventInfo";
 
 export default function EventVisit() {
   const { eventId } = useParams<{ eventId: string }>();

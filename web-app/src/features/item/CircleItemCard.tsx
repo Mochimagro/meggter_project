@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import type { BookCardProps } from "../entities/CardEntities";
+import type { BookCardProps } from "../../entities/CardEntities";
 import type { WishlistItemStatus } from "@/db/database";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";

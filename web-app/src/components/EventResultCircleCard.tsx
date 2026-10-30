@@ -1,14 +1,11 @@
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";
-import CircleItemCard from "./CircleItemCard";
+import CircleItemCard from "../features/item/CircleItemCard";
 
 type EventResultCircleCardProps = CircleCardProps & {
   disabled: boolean;
-  onStatusChange: (
-    itemId: string,
-    status: WishlistItemStatus,
-  ) => Promise<void>;
+  onStatusChange: (itemId: string, status: WishlistItemStatus) => Promise<void>;
 };
 
 export default function EventResultCircleCard({

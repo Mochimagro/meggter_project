@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../../db/database";
-import type { EventInfoCardProps } from "../../entities/CardEntities";
+import { db } from "../db/database";
+import type { EventInfoCardProps } from "../entities/CardEntities";
 
 export function useEventInfo(eventId: string | undefined) {
   return useLiveQuery(async () => {
@@ -45,30 +45,31 @@ export function useEventInfo(eventId: string | undefined) {
         );
         const pricedBooks = books.filter((book) => book.price !== null);
 
-        return [{
-          id: circle.id,
-          circleVisitId: visit.id,
-          priority: visit.priority,
-          visited: visit.status === "visited",
-          name: circle.circleName,
-          penName: circle.penName ?? "",
-          circleURL: circle.circleURL,
-          space: visit.space,
-          totalPrice:
-            pricedBooks.length > 0
-              ? pricedBooks.reduce(
-                  (total, book) =>
-                    total + (book.price ?? 0) * book.quantity,
-                  0,
-                )
-              : null,
-          books: books.map((book) => ({
-            id: book.id,
-            title: book.title,
-            price: book.price,
-            status: book.status,
-          })),
-        }];
+        return [
+          {
+            id: circle.id,
+            circleVisitId: visit.id,
+            priority: visit.priority,
+            visited: visit.status === "visited",
+            name: circle.circleName,
+            penName: circle.penName ?? "",
+            circleURL: circle.circleURL,
+            space: visit.space,
+            totalPrice:
+              pricedBooks.length > 0
+                ? pricedBooks.reduce(
+                    (total, book) => total + (book.price ?? 0) * book.quantity,
+                    0,
+                  )
+                : null,
+            books: books.map((book) => ({
+              id: book.id,
+              title: book.title,
+              price: book.price,
+              status: book.status,
+            })),
+          },
+        ];
       }),
     };
 

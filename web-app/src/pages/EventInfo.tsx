@@ -1,6 +1,6 @@
 import EventInfoCard from "../components/EventInfoCard";
 import { useParams } from "react-router";
-import { useEventInfo } from "../features/events/useEventInfo";
+import { useEventInfo } from "../hooks/useEventInfo";
 import { Header } from "@/components/Header";
 import { Container } from "@chakra-ui/react";
 

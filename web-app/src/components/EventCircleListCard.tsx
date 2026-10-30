@@ -14,7 +14,7 @@ import {
   type NewWishlistItem,
 } from "@/hooks/useAddWishlistItem";
 import type { CircleCardProps } from "../entities/CardEntities";
-import CircleItemCard from "./CircleItemCard";
+import CircleItemCard from "../features/item/CircleItemCard";
 import EventCircleAddItemCard from "./EventCircleAddItemCard";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";

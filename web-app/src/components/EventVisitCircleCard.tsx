@@ -8,7 +8,7 @@ import {
   setWishlistItemStatus,
   undoCircleVisit,
 } from "@/db/recordMutations";
-import CircleItemCard from "./CircleItemCard";
+import CircleItemCard from "../features/item/CircleItemCard";
 import { semanticColors } from "@/theme/semanticColors";
 
 type EventVisitCircleCardProps = CircleCardProps;

@@ -6,7 +6,7 @@ import EventResultCircleCard from "@/components/EventResultCircleCard";
 import EventResultCheckedItemList from "@/components/EventResultCheckedItemList";
 import { Header } from "@/components/Header";
 import { setWishlistItemStatus } from "@/db/recordMutations";
-import { useEventInfo } from "@/features/events/useEventInfo";
+import { useEventInfo } from "@/hooks/useEventInfo";
 
 export default function EventResult() {
   const { eventId } = useParams<{ eventId: string }>();
