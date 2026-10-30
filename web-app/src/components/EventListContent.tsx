@@ -1,5 +1,5 @@
 import { Container } from "@chakra-ui/react";
-import { useEvents } from "@/features/events/useEvents";
+import { useEvents } from "@/hooks/useEvents";
 import EventListCard from "./EventListCard";
 
 type EventListContentProps = {
