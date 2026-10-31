@@ -1,3 +1,4 @@
+// サークルカードの見出し部分を表示する。
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { Circle } from "@/db/database";

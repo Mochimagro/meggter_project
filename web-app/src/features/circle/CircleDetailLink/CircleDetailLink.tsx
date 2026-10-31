@@ -1,3 +1,4 @@
+// サークル詳細画面へのリンクを表示する。
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
 

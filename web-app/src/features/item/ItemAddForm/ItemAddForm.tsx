@@ -1,3 +1,4 @@
+// 新しいアイテムを追加するフォームを表示する。
 import { Button, Card, Field, Heading, Input, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import type { NewWishlistItem } from "@/hooks/useAddWishlistItem";

@@ -1,3 +1,4 @@
+// イベント中のサークル巡回状況を進捗表示する。
 import { Stack, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";

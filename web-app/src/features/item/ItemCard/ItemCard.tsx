@@ -1,3 +1,4 @@
+// アイテム情報をカード形式で表示する。
 import { Card } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { WishlistItem } from "@/db/database";

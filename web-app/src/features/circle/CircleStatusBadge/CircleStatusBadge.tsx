@@ -1,3 +1,4 @@
+// サークルの状態をバッジで表示する。
 import { Text } from "@chakra-ui/react";
 import { semanticColors } from "@/theme/semanticColors";
 

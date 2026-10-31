@@ -1,3 +1,4 @@
+// イベント情報をカード形式で表示する。
 import { Card } from "@chakra-ui/react";
 import type { ComponentProps, ReactNode } from "react";
 import EventCardBody from "./EventCardBody";

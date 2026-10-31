@@ -1,3 +1,4 @@
+// イベントの開催結果を集計して表示する。
 import { Box, Heading, Stack, Text } from "@chakra-ui/react";
 import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";

@@ -1,3 +1,4 @@
+// サークル巡回に関する操作を提供する。
 import { Button, Stack, Text } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import {

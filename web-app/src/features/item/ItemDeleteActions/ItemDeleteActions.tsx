@@ -1,3 +1,4 @@
+// アイテムを削除するための操作を提供する。
 import { Button, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { deleteWishlistItem } from "@/db/recordMutations";

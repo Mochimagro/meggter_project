@@ -1,3 +1,4 @@
+// イベントへの参加サークル追加を開始するボタンを表示する。
 import { Button } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import {

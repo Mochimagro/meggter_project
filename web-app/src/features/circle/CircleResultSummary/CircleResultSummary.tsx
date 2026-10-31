@@ -1,3 +1,4 @@
+// サークルの販売結果を集計して表示する。
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 import type { WishlistItemStatus } from "@/db/database";
 import type { CircleCardProps } from "@/entities/CardEntities";

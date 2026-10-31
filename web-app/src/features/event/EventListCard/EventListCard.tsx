@@ -1,3 +1,4 @@
+// イベントの概要を一覧用カードで表示する。
 import {
   Button,
   Field,

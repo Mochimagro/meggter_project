@@ -1,3 +1,4 @@
+// イベントカードの見出し部分を表示する。
 import { Flex, Heading, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import EventSchedule from "../EventSchedule";

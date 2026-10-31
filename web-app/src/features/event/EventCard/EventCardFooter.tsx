@@ -1,3 +1,4 @@
+// イベントカードの操作や補足情報を表示するフッター。
 import { Card } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

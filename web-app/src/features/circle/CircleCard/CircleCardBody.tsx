@@ -1,3 +1,4 @@
+// サークルカードの本文領域を表示する。
 import { Card } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

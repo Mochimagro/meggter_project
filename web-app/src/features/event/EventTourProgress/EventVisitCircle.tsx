@@ -1,3 +1,4 @@
+// イベントで巡回するサークルと訪問状態を表示する。
 import { Card, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import type { WishlistItemStatus } from "@/db/database";

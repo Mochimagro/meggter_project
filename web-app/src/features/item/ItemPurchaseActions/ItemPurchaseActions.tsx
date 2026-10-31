@@ -1,3 +1,4 @@
+// アイテムの購入状態を変更する操作を提供する。
 import { Button, Stack, Text } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import type { WishlistItemStatus } from "@/db/database";

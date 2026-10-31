@@ -1,3 +1,4 @@
+// イベントの日程を表示する。
 import { Flex, Stack, Text } from "@chakra-ui/react";
 import { BsMap } from "react-icons/bs";
 import { FaCalendarAlt } from "react-icons/fa";

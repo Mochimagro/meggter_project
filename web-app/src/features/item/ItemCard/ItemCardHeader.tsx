@@ -1,3 +1,4 @@
+// アイテムカードの見出し部分を表示する。
 import { Flex, Heading } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import ItemPrice from "../ItemPrice";

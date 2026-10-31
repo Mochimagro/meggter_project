@@ -1,3 +1,4 @@
+// アイテムの購入結果を集計して表示する。
 import { Box, Text } from "@chakra-ui/react";
 import type { BookCardProps } from "@/entities/CardEntities";
 import ItemCard from "@/features/item/ItemCard";

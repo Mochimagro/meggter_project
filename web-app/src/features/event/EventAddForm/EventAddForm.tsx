@@ -1,3 +1,4 @@
+// 新しいイベントを登録するフォームを表示する。
 import { Button, Field, Input, Text, VStack } from "@chakra-ui/react";
 import { useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";

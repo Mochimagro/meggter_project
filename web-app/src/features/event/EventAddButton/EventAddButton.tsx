@@ -1,3 +1,4 @@
+// イベント追加フォームを開くボタンを表示する。
 import { Button, Text } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router";

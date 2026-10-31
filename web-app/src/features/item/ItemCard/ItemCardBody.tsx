@@ -1,3 +1,4 @@
+// アイテムカードの本文領域を表示する。
 import { Card, Stack, Text } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import type { WishlistItemStatus } from "@/db/database";

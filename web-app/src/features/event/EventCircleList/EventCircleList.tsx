@@ -1,3 +1,4 @@
+// イベントに参加するサークルの一覧を表示する。
 import { Stack } from "@chakra-ui/react";
 import type { CircleCardProps } from "@/entities/CardEntities";
 import EventCircleEntry from "./EventCircleEntry";

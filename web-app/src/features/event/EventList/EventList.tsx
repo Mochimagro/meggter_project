@@ -1,3 +1,4 @@
+// イベントの一覧を表示する。
 import { Container } from "@chakra-ui/react";
 import { useEvents } from "@/hooks/useEvents";
 import EventListCard from "../EventListCard/EventListCard";

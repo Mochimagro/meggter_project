@@ -1,3 +1,4 @@
+// アイテムの価格を表示する。
 import { Flex, Text } from "@chakra-ui/react";
 import { GiTwoCoins } from "react-icons/gi";
 

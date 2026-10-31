@@ -1,3 +1,4 @@
+// イベントの状態をバッジで表示する。
 import { Text } from "@chakra-ui/react";
 import type { EventStatus } from "@/db/database";
 import { semanticColors } from "@/theme/semanticColors";
