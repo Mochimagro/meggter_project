@@ -1,16 +1,16 @@
 import type { EventStatus, WishlistItemStatus } from "@/db/database";
 
-export type EventListProps = { events: EventInfoCardProps[] };
+export type EventListProps = { events: EventInfoDataProps[] };
 
 export type EventListCardProps = Pick<
-  EventInfoCardProps,
+  EventInfoDataProps,
   "title" | "date" | "venue"
 > & {
   id: string;
   status: EventStatus;
 };
 
-export type EventInfoCardProps = {
+export type EventInfoDataProps = {
   title: string;
   date: string;
   venue?: string | null;

@@ -1,8 +1,10 @@
-import EventInfoCard from "../components/EventInfoCard";
 import { useParams } from "react-router";
 import { useEventInfo } from "../hooks/useEventInfo";
 import { Header } from "@/components/Header";
 import { Container } from "@chakra-ui/react";
+import EventCard from "@/features/event/EventCard";
+import EventCircleAddButton from "@/features/event/EventCircleAddButton/EventCircleAddButton";
+import EventCircleList from "@/features/event/EventCircleList/EventCircleList";
 
 export default function EventInfo() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -24,7 +26,17 @@ export default function EventInfo() {
     <>
       <Header pageName="イベント情報"></Header>
       <Container as="main" py={8}>
-        <EventInfoCard eventId={eventId} {...event} />
+        <EventCard
+          eventId={eventId}
+          title={event.title}
+          date={event.date}
+          venue={event.venue ?? ""}
+          entranceFee={event.entranceFee}
+          transportationExpenses={event.transportationExpenses}
+          actions={<EventCircleAddButton eventId={eventId} />}
+        >
+          <EventCircleList eventId={eventId} circles={event.circles} />
+        </EventCard>
       </Container>
     </>
   );

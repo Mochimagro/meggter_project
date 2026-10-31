@@ -1,6 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db/database";
-import type { EventInfoCardProps } from "../entities/CardEntities";
+import type { EventInfoDataProps } from "../entities/CardEntities";
 
 export function useEventInfo(eventId: string | undefined) {
   return useLiveQuery(async () => {
@@ -29,7 +29,7 @@ export function useEventInfo(eventId: string | undefined) {
       : [];
     const circlesById = new Map(circles.map((circle) => [circle.id, circle]));
 
-    const eventInfo: EventInfoCardProps = {
+    const eventInfo: EventInfoDataProps = {
       title: event.name,
       date: event.eventDate,
       venue: event.venue,

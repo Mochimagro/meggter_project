@@ -16,17 +16,17 @@ import {
 } from "@/hooks/useAddCircle";
 import { normalizeExternalUrl } from "@/utils/externalUrl";
 
-type EventAddCirclrCardProps = {
+type EventCircleAddFormProps = {
   onAdd: (selection: CircleSelection) => Promise<string>;
   onCancel: () => void;
 };
 
 const NEW_CIRCLE_OPTION = "__new_circle__";
 
-export default function EventAddCirclrCard({
+export default function EventCircleAddForm({
   onAdd,
   onCancel,
-}: EventAddCirclrCardProps) {
+}: EventCircleAddFormProps) {
   const [selectedCircleId, setSelectedCircleId] = useState("");
   const [newCircleName, setNewCircleName] = useState("");
   const [penName, setPenName] = useState("");
