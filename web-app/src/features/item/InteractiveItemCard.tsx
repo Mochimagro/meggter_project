@@ -1,23 +1,21 @@
 import {
   Button,
-  Card,
   Field,
-  Flex,
-  Heading,
   Input,
+  Stack,
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import type { BookCardProps } from "../../entities/CardEntities";
+import type { BookCardProps } from "@/entities/CardEntities";
 import type { WishlistItemStatus } from "@/db/database";
-import { GiTwoCoins } from "react-icons/gi";
-import { HiOutlinePencilSquare } from "react-icons/hi2";
 import {
   deleteWishlistItem,
   setWishlistItemStatus,
   updateWishlistItem,
 } from "@/db/recordMutations";
-import { semanticColors } from "@/theme/semanticColors";
+import ItemCard from "@/features/item/ItemCard";
+import ItemPurchaseActions from "@/features/item/ItemPurchaseActions";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 
 type InteractiveItemCardProps = BookCardProps & {
   visitActions?: boolean;
@@ -66,6 +64,7 @@ export default function InteractiveItemCard({
     itemTitle.trim().length > 0 &&
     (parsedPrice === null ||
       (Number.isFinite(parsedPrice) && parsedPrice >= 0));
+  const isActionCard = visitActions || resultActions;
 
   const handleStartEditing = () => {
     setItemTitle(title);
@@ -143,45 +142,40 @@ export default function InteractiveItemCard({
   };
 
   return (
-    <Card.Root
-      position="relative"
-      background={
-        status === "venue_acquired" || status === "online_purchased"
-          ? semanticColors.positive.card
-          : status === "venue_unacquired" || status === "given_up"
-            ? semanticColors.negative.card
-            : "colorPalette"
+    <ItemCard
+      item={{ id, title, price, status }}
+      showBody={!isEditing && !isActionCard}
+      headerActions={
+        isActionCard
+          ? undefined
+          : isEditing
+            ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCancelEditing}
+                  disabled={isSubmitting}
+                >
+                  キャンセル
+                </Button>
+              )
+            : (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  aria-label="購入予定アイテムを編集"
+                  title="編集"
+                  onClick={handleStartEditing}
+                >
+                  <HiOutlinePencilSquare />
+                </Button>
+              )
       }
-    >
-      {!visitActions && !resultActions && (
-        <Flex position="absolute" top={2} right={2}>
-          {isEditing ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={handleCancelEditing}
-              disabled={isSubmitting}
-            >
-              キャンセル
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              aria-label="購入予定アイテムを編集"
-              title="編集"
-              onClick={handleStartEditing}
-            >
-              <HiOutlinePencilSquare />
-            </Button>
-          )}
-        </Flex>
-      )}
-      <Card.Header paddingTop={10}>
-        {isEditing ? (
-          <>
+      headerContent={
+        isEditing ? (
+          <Stack gap={3} paddingTop={8}>
             <Field.Root required>
               <Field.Label>買うもの</Field.Label>
               <Input
@@ -201,133 +195,77 @@ export default function InteractiveItemCard({
                 onChange={(event) => setItemPrice(event.target.value)}
               />
             </Field.Root>
-          </>
-        ) : (
+          </Stack>
+        ) : undefined
+      }
+      actions={
+        isEditing ? (
           <>
-            <Heading size="md">{title}</Heading>
-            <Flex align="center" gap={2}>
-              <GiTwoCoins />
-              <Text>{price === null ? "価格未設定" : `${price}円`}</Text>
-            </Flex>
-          </>
-        )}
-      </Card.Header>
-      {!isEditing && !visitActions && !resultActions && (
-        <Card.Body paddingTop={0}>
-          <label>
-            <Text as="span" marginRight={2}>
-              入手状態
-            </Text>
-            <select
-              aria-label={`${title}の入手状態`}
-              value={status}
-              disabled={isStatusSubmitting}
-              onChange={(event) => {
-                const nextStatus = wishlistItemStatuses.find(
-                  (option) => option.value === event.target.value,
-                );
-                if (nextStatus) {
-                  void handleStatusChange(nextStatus.value);
-                }
-              }}
-            >
-              {wishlistItemStatuses.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          {visitError && (
-            <Text role="alert" color="red.600">
-              {visitError}
-            </Text>
-          )}
-        </Card.Body>
-      )}
-      {isEditing && (
-        <Card.Footer justifyContent="flex-end">
-          {editError && (
-            <Text role="alert" color="red.600" marginRight="auto">
-              {editError}
-            </Text>
-          )}
-          <Button
-            type="button"
-            backgroundColor="red.600"
-            color="white"
-            onClick={handleDelete}
-            disabled={isSubmitting}
-          >
-            削除
-          </Button>
-          <Button
-            type="button"
-            onClick={handleUpdate}
-            disabled={!canUpdate || isSubmitting}
-          >
-            {isSubmitting ? "更新中..." : "更新"}
-          </Button>
-        </Card.Footer>
-      )}
-      {visitActions && (
-        <Card.Footer justifyContent="flex-end" flexWrap="wrap">
-          {/*
-          <Button
-            type="button"
-            aria-pressed={status === "venue_acquired"}
-            variant={status === "venue_acquired" ? "solid" : "outline"}
-            colorPalette="green"
-            onClick={() => void handleStatusChange("venue_acquired")}
-            disabled={isStatusSubmitting || status === "venue_acquired"}
-          >
-            入手
-          </Button>
-          */}
-          {visited ? null : (
+            {editError && (
+              <Text role="alert" color="red.600" marginRight="auto">
+                {editError}
+              </Text>
+            )}
             <Button
               type="button"
-              aria-pressed={status === "venue_unacquired"}
-              backgroundColor={semanticColors.negative.button}
-              onClick={() =>
-                void handleStatusChange(
-                  status === "venue_unacquired"
-                    ? "not_acquired"
-                    : "venue_unacquired",
-                )
-              }
-              disabled={visited}
+              backgroundColor="red.600"
+              color="white"
+              onClick={handleDelete}
+              disabled={isSubmitting}
             >
-              {status === "venue_unacquired" ? "完売取り消し" : "完売してた"}
+              削除
             </Button>
-          )}
-        </Card.Footer>
-      )}
-      {resultActions && (
-        <Card.Footer justifyContent="flex-end" flexWrap="wrap">
-          {visitError && (
-            <Text role="alert" color="red.600" marginRight="auto">
-              {visitError}
-            </Text>
-          )}
-          <Button
-            type="button"
-            backgroundColor={semanticColors.positive.button}
-            onClick={() => void handleStatusChange("online_purchased")}
-            disabled={disabled || isStatusSubmitting}
+            <Button
+              type="button"
+              onClick={handleUpdate}
+              disabled={!canUpdate || isSubmitting}
+            >
+              {isSubmitting ? "更新中..." : "更新"}
+            </Button>
+          </>
+        ) : visitActions || resultActions ? (
+          <ItemPurchaseActions
+            itemId={id}
+            status={status}
+            mode={visitActions ? "visit" : "result"}
+            visited={visited}
+            disabled={disabled}
+            onStatusChange={onStatusChange}
+          />
+        ) : undefined
+      }
+    >
+      {!isEditing && !isActionCard && (
+        <label>
+          <Text as="span" marginRight={2}>
+            入手状態
+          </Text>
+          <select
+            aria-label={`${title}の入手状態`}
+            value={status}
+            disabled={isStatusSubmitting}
+            onChange={(event) => {
+              const nextStatus = wishlistItemStatuses.find(
+                (option) => option.value === event.target.value,
+              );
+              if (nextStatus) {
+                void handleStatusChange(nextStatus.value);
+              }
+            }}
           >
-            通販で買う
-          </Button>
-          <Button
-            type="button"
-            backgroundColor={semanticColors.negative.button}
-            onClick={() => void handleStatusChange("not_acquired")}
-            disabled={disabled || isStatusSubmitting}
-          >
-            逃す
-          </Button>
-        </Card.Footer>
+            {wishlistItemStatuses.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
       )}
-    </Card.Root>
+      {!isEditing && visitError && (
+        <Text role="alert" color="red.600">
+          {visitError}
+        </Text>
+      )}
+    </ItemCard>
   );
 }

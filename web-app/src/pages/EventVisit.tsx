@@ -2,9 +2,11 @@ import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router";
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import EventVisitCircleCard from "@/components/EventVisitCircleCard";
 import { withdrawEvent } from "@/db/recordMutations";
 import { useEventInfo } from "@/hooks/useEventInfo";
+import EventCard from "@/features/event/EventCard";
+import EventTourProgress from "@/features/event/EventTourProgress";
+import EventVisitCircle from "@/features/event/EventTourProgress/EventVisitCircle";
 
 export default function EventVisit() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -24,8 +26,6 @@ export default function EventVisit() {
   if (event === null) {
     return <p>イベントが見つかりません。</p>;
   }
-
-  const visitedCount = event.circles.filter((circle) => circle.visited).length;
 
   const handleWithdraw = async () => {
     if (isWithdrawing) {
@@ -50,24 +50,29 @@ export default function EventVisit() {
     <>
       <Header pageName="イベント巡回管理 - EventVisit" />
       <Container as="main" py={8}>
-        <Stack gap={5}>
-          <Heading size="2xl">{event.title}</Heading>
-          <Text fontSize="xl" fontWeight="bold" aria-live="polite">
-            巡回済みサークル数: {visitedCount} / {event.circles.length}
-          </Text>
-          {event.circles.map((circle) => (
-            <EventVisitCircleCard key={circle.circleVisitId} {...circle} />
-          ))}
-        </Stack>
-        <Stack justifyContent="flex-end" flexWrap="wrap" py={8}>
-          <Button
-            type="button"
-            colorPalette="orange"
-            onClick={() => setIsWithdrawalConfirmationOpen(true)}
-          >
-            戦場を去る
-          </Button>
-        </Stack>
+        <EventCard
+          eventId={eventId}
+          title={event.title}
+          date={event.date}
+          venue={event.venue ?? ""}
+          entranceFee={event.entranceFee}
+          transportationExpenses={event.transportationExpenses}
+          actions={
+            <Button
+              type="button"
+              colorPalette="orange"
+              onClick={() => setIsWithdrawalConfirmationOpen(true)}
+            >
+              戦場を去る
+            </Button>
+          }
+        >
+          <EventTourProgress circles={event.circles}>
+            {event.circles.map((circle) => (
+              <EventVisitCircle key={circle.circleVisitId} {...circle} />
+            ))}
+          </EventTourProgress>
+        </EventCard>
       </Container>
       {isWithdrawalConfirmationOpen && (
         <Box

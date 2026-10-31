@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Container } from "@chakra-ui/react";
 import EventCard from "@/features/event/EventCard";
 import EventCircleAddButton from "@/features/event/EventCircleAddButton/EventCircleAddButton";
-import EventCircleList from "@/features/event/EventCircleList/EventCircleList";
+import EventTourProgress from "@/features/event/EventTourProgress";
 
 export default function EventInfo() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -35,7 +35,11 @@ export default function EventInfo() {
           transportationExpenses={event.transportationExpenses}
           actions={<EventCircleAddButton eventId={eventId} />}
         >
-          <EventCircleList eventId={eventId} circles={event.circles} />
+          <EventTourProgress
+            circles={event.circles}
+            eventId={eventId}
+            showProgress={false}
+          />
         </EventCard>
       </Container>
     </>

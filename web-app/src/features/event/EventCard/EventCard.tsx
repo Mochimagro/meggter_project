@@ -1,7 +1,8 @@
-import { Card, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
 import type { ComponentProps, ReactNode } from "react";
-import { BsMap } from "react-icons/bs";
-import { FaCalendarAlt } from "react-icons/fa";
+import EventCardBody from "./EventCardBody";
+import EventCardFooter from "./EventCardFooter";
+import EventCardHeader from "./EventCardHeader";
 
 export type EventCardProps = {
   eventId: string;
@@ -41,39 +42,19 @@ export default function EventCard({
       backgroundColor={backgroundColor}
       margin={margin}
     >
-      <Card.Header position="relative">
-        {headerActions != null && (
-          <Flex position="absolute" top={3} right={3}>
-            {headerActions}
-          </Flex>
-        )}
-        {headerContent ?? (
-          <Stack gap={3} paddingTop={headerActions != null ? 8 : undefined}>
-            <Heading size="4xl">{title}</Heading>
-            <Flex align="center" gap={2}>
-              <FaCalendarAlt />
-              <Text>{date}</Text>
-            </Flex>
-            <Flex align="center" gap={2}>
-              <BsMap />
-              <Text>{venue}</Text>
-            </Flex>
-            {entranceFee != null && (
-              <Text>参加費：{entranceFee.toLocaleString()}円</Text>
-            )}
-            {transportationExpenses != null && (
-              <Text>交通費：{transportationExpenses.toLocaleString()}円</Text>
-            )}
-          </Stack>
-        )}
+      <Card.Header>
+        <EventCardHeader
+          title={title}
+          date={date}
+          venue={venue}
+          entranceFee={entranceFee}
+          transportationExpenses={transportationExpenses}
+          headerContent={headerContent}
+          headerActions={headerActions}
+        />
       </Card.Header>
-      {children != null && (
-        <Card.Body>{children}</Card.Body>
-      )}
-      {actions != null && (
-        <Card.Footer justifyContent="flex-end">{actions}</Card.Footer>
-      )}
-      {footer != null && <Card.Footer>{footer}</Card.Footer>}
+      <EventCardBody>{children}</EventCardBody>
+      <EventCardFooter actions={actions} footer={footer} />
     </Card.Root>
   );
 }

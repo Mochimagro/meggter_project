@@ -2,7 +2,7 @@ import { Button, Text } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
-export default function AddEventButton() {
+export default function EventAddButton() {
   const navigate = useNavigate();
   return (
     <Button

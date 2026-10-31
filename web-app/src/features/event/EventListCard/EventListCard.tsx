@@ -2,17 +2,18 @@ import {
   Button,
   Field,
   Input,
-  Text,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { isBefore, isToday, isValid, parseISO, startOfToday } from "date-fns";
-import type { EventListCardProps } from "../entities/CardEntities";
+import type { EventListCardProps } from "@/entities/CardEntities";
 import { useNavigate } from "react-router";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { deleteEvent, updateEvent } from "@/db/recordMutations";
 import { semanticColors } from "@/theme/semanticColors";
 import EventCard from "@/features/event/EventCard";
+import EventStatusBadge from "@/features/event/EventStatusBadge";
+import { getEventDateStatus } from "@/features/event/EventStatusBadge";
 
 function toInputDate(date: string) {
   const isoDate = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -32,18 +33,8 @@ export default function EventListCard({
   venue,
   status,
 }: EventListCardProps) {
-  const isoDate = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const japaneseDate = date.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日$/);
-  const dateToCheck = isoDate
-    ? date
-    : japaneseDate
-      ? `${japaneseDate[1]}-${japaneseDate[2].padStart(2, "0")}-${japaneseDate[3].padStart(2, "0")}`
-      : null;
-  const parsedDate = dateToCheck ? parseISO(dateToCheck) : null;
-  const isValidEventDate = parsedDate !== null && isValid(parsedDate);
-  const isEventToday = isValidEventDate && isToday(parsedDate);
-  const isPastEvent = isValidEventDate && isBefore(parsedDate, startOfToday());
-  const shouldShowResult = status === "withdrawn" || isPastEvent;
+  const dateStatus = getEventDateStatus(date);
+  const shouldShowResult = status === "withdrawn" || dateStatus.isPast;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [eventName, setEventName] = useState(title);
@@ -119,7 +110,7 @@ export default function EventListCard({
       backgroundColor={
         shouldShowResult
           ? semanticColors.negative.card
-          : isEventToday
+          : dateStatus.isToday
             ? semanticColors.hot.card
             : "colorPalette"
       }
@@ -215,7 +206,7 @@ export default function EventListCard({
             >
               結果
             </Button>
-          ) : isEventToday ? (
+          ) : dateStatus.isToday ? (
             <Button
               type="button"
               margin="4px"
@@ -238,21 +229,7 @@ export default function EventListCard({
         </>
       }
     >
-      <Text
-        position="absolute"
-        top={3}
-        left={3}
-        fontWeight="bold"
-        color={shouldShowResult ? semanticColors.negative.text : "gray.600"}
-      >
-        {status === "withdrawn"
-          ? "撤退済み"
-          : isPastEvent
-            ? "終了"
-            : isEventToday
-              ? "当日"
-              : "開催前"}
-      </Text>
+      <EventStatusBadge date={date} status={status} />
     </EventCard>
   );
 }

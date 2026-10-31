@@ -2,15 +2,12 @@ import { Button, Card, Field, Heading, Input, Stack, Text } from "@chakra-ui/rea
 import { useState } from "react";
 import type { NewWishlistItem } from "@/hooks/useAddWishlistItem";
 
-type EventCircleAddItemCardProps = {
+type ItemAddFormProps = {
   onAdd: (item: NewWishlistItem) => Promise<string>;
   onCancel: () => void;
 };
 
-export default function EventCircleAddItemCard({
-  onAdd,
-  onCancel,
-}: EventCircleAddItemCardProps) {
+export default function ItemAddForm({ onAdd, onCancel }: ItemAddFormProps) {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

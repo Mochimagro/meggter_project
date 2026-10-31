@@ -1,12 +1,12 @@
-import { Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Container, Stack } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { WishlistItemStatus } from "@/db/database";
-import EventResultCircleCard from "@/components/EventResultCircleCard";
-import EventResultCheckedItemList from "@/components/EventResultCheckedItemList";
 import { Header } from "@/components/Header";
-import { setWishlistItemStatus } from "@/db/recordMutations";
 import { useEventInfo } from "@/hooks/useEventInfo";
+import EventCard from "@/features/event/EventCard";
+import EventResultSummary from "@/features/event/EventResultSummary";
+import { setWishlistItemStatus } from "@/db/recordMutations";
 
 export default function EventResult() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -25,17 +25,6 @@ export default function EventResult() {
   if (event === null) {
     return <p>イベントが見つかりません。</p>;
   }
-
-  const resultCircles = event.circles
-    .map((circle) => ({
-      ...circle,
-      books: circle.books.filter((book) => book.status === "venue_unacquired"),
-    }))
-    .filter((circle) => circle.books.length > 0);
-  const missedItemsCount = resultCircles.reduce(
-    (count, circle) => count + circle.books.length,
-    0,
-  );
 
   const updateItemStatus = async (
     itemId: string,
@@ -64,34 +53,32 @@ export default function EventResult() {
     <>
       <Header pageName="イベント結果 - EventResult" />
       <Container as="main" py={8}>
-        <Stack gap={5}>
-          <Heading size="2xl">{event.title}</Heading>
-          <Text fontSize="xl" fontWeight="bold">
-            買い逃したアイテム: {missedItemsCount}
-          </Text>
-          {error && (
-            <Text role="alert" color="red.600">
-              {error}
-            </Text>
-          )}
-          {resultCircles.map((circle) => (
-            <EventResultCircleCard
-              key={circle.circleVisitId}
-              {...circle}
+        <EventCard
+          eventId={eventId}
+          title={event.title}
+          date={event.date}
+          venue={event.venue ?? ""}
+          entranceFee={event.entranceFee}
+          transportationExpenses={event.transportationExpenses}
+          actions={
+            <Button
+              type="button"
+              alignSelf="flex-end"
+              onClick={() => navigate(`/`)}
+            >
+              トップページに戻る
+            </Button>
+          }
+        >
+          <Stack gap={5}>
+            <EventResultSummary
+              circles={event.circles}
               disabled={isSubmitting}
               onStatusChange={updateItemStatus}
+              error={error}
             />
-          ))}
-          {resultCircles.length === 0 && <Text>未チェック無し。</Text>}
-          <EventResultCheckedItemList circles={event.circles} />
-          <Button
-            type="button"
-            alignSelf="flex-end"
-            onClick={() => navigate(`/`)}
-          >
-            トップページに戻る
-          </Button>
-        </Stack>
+          </Stack>
+        </EventCard>
       </Container>
     </>
   );

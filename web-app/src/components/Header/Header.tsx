@@ -1,5 +1,5 @@
 import { Flex, Text, VStack } from "@chakra-ui/react";
-import { SideMenu } from "./SideMenu";
+import { SideMenu } from "../SideMenu";
 
 type HeaderProps = {
   pageName: string;

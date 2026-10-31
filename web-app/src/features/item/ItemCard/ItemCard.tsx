@@ -1,21 +1,20 @@
-import { Card, Heading, Text } from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
 import type { ReactNode } from "react";
-import type { WishlistItem, WishlistItemStatus } from "@/db/database";
+import type { WishlistItem } from "@/db/database";
 import { semanticColors } from "@/theme/semanticColors";
+import ItemCardBody from "./ItemCardBody";
+import ItemCardFooter from "./ItemCardFooter";
+import ItemCardHeader from "./ItemCardHeader";
 
 export type ItemCardProps = {
-  item: WishlistItem;
-  eventName: string;
+  item: Pick<WishlistItem, "id" | "title" | "price" | "status">;
+  eventName?: string;
   actions?: ReactNode;
   footer?: ReactNode;
-};
-
-const statusLabels: Record<WishlistItemStatus, string> = {
-  not_acquired: "未入手",
-  venue_acquired: "会場入手済",
-  venue_unacquired: "会場未入手",
-  online_purchased: "通販購入済",
-  given_up: "諦める",
+  headerContent?: ReactNode;
+  headerActions?: ReactNode;
+  children?: ReactNode;
+  showBody?: boolean;
 };
 
 export default function ItemCard({
@@ -23,41 +22,39 @@ export default function ItemCard({
   eventName,
   actions,
   footer,
+  headerContent,
+  headerActions,
+  children,
+  showBody = true,
 }: ItemCardProps) {
-  const isPositive =
-    item.status === "venue_acquired" || item.status === "online_purchased";
-  const isNegative =
-    item.status === "venue_unacquired" || item.status === "given_up";
-
   return (
     <Card.Root
+      position="relative"
       backgroundColor={
-        isPositive
+        item.status === "venue_acquired" || item.status === "online_purchased"
           ? semanticColors.positive.card
-          : isNegative
+          : item.status === "venue_unacquired" || item.status === "given_up"
             ? semanticColors.negative.card
             : undefined
       }
     >
-      <Card.Header>
-        <Heading size="md">{item.title}</Heading>
+      <Card.Header paddingTop={headerActions != null ? 10 : undefined}>
+        <ItemCardHeader
+          title={item.title}
+          price={item.price}
+          headerContent={headerContent}
+          headerActions={headerActions}
+        />
       </Card.Header>
-      <Card.Body>
-        <Text
-          color={
-            isPositive
-              ? semanticColors.positive.text
-              : isNegative
-                ? semanticColors.negative.text
-                : undefined
-          }
+      {showBody && (
+        <ItemCardBody
+          status={item.status}
+          eventName={eventName}
         >
-          状態: {statusLabels[item.status]}
-        </Text>
-        <Text>頒布イベント: {eventName}</Text>
-      </Card.Body>
-      {actions && <Card.Footer>{actions}</Card.Footer>}
-      {footer && <Card.Footer>{footer}</Card.Footer>}
+          {children}
+        </ItemCardBody>
+      )}
+      <ItemCardFooter actions={actions} footer={footer} />
     </Card.Root>
   );
 }

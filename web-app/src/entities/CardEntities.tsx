@@ -1,7 +1,5 @@
 import type { EventStatus, WishlistItemStatus } from "@/db/database";
 
-export type EventListProps = { events: EventInfoDataProps[] };
-
 export type EventListCardProps = Pick<
   EventInfoDataProps,
   "title" | "date" | "venue"

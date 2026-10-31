@@ -1,10 +1,12 @@
-import { Container, Heading, Stack, Text } from "@chakra-ui/react";
+import { Container, Stack, Text } from "@chakra-ui/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams } from "react-router";
 import { Header } from "@/components/Header";
 import { db } from "@/db/database";
 import ItemCard from "@/features/item/ItemCard";
 import ItemDeleteActions from "@/features/item/ItemDeleteActions/ItemDeleteActions";
+import CircleCard from "@/features/circle/CircleCard";
+import CircleEditForm from "@/features/circle/CircleEditForm/CircleEditForm";
 
 export default function CircleInfo() {
   const { circleId } = useParams<{ circleId: string }>();
@@ -38,7 +40,7 @@ export default function CircleInfo() {
     const eventById = new Map(events.map((event) => [event.id, event]));
 
     return {
-      circleName: circle.circleName,
+      circle,
       items: items.map((item) => {
         const visit = visitById.get(item.circleVisitId);
         const event = visit ? eventById.get(visit.eventId) : undefined;
@@ -66,25 +68,31 @@ export default function CircleInfo() {
       <Header pageName="サークル情報" />
       <Container as="main" py={8}>
         <Stack gap={5}>
-          <Heading size="2xl">{circleInfo.circleName}</Heading>
-          {circleInfo.items.length === 0 ? (
-            <Text>アイテムはまだ登録されていません。</Text>
-          ) : (
-            circleInfo.items
-              .sort(
-                (first, second) =>
-                  first.priority - second.priority ||
-                  first.eventName.localeCompare(second.eventName),
-              )
-              .map(({ item, eventName }) => (
-                <ItemCard
-                  key={item.id}
-                  item={item}
-                  eventName={eventName}
-                  actions={<ItemDeleteActions itemId={item.id} />}
-                />
-              ))
-          )}
+          <CircleCard
+            circle={circleInfo.circle}
+          >
+            <Stack gap={5}>
+              <CircleEditForm circle={circleInfo.circle} />
+              {circleInfo.items.length === 0 ? (
+                <Text>アイテムはまだ登録されていません。</Text>
+              ) : (
+                circleInfo.items
+                  .sort(
+                    (first, second) =>
+                      first.priority - second.priority ||
+                      first.eventName.localeCompare(second.eventName),
+                  )
+                  .map(({ item, eventName }) => (
+                    <ItemCard
+                      key={item.id}
+                      item={item}
+                      eventName={eventName}
+                      actions={<ItemDeleteActions itemId={item.id} />}
+                    />
+                  ))
+              )}
+            </Stack>
+          </CircleCard>
         </Stack>
       </Container>
     </>

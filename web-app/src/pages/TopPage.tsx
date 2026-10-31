@@ -1,13 +1,13 @@
 import { Header } from "@/components/Header";
-import AddEventButton from "@/components/AddEventButton";
-import EventListContent from "@/components/EventListContent";
+import EventAddButton from "@/features/event/EventAddButton";
+import EventListFeature from "@/features/event/EventList";
 
 export default function TopPage() {
   return (
     <>
       <Header pageName="トップ - 開催前イベント"></Header>
-      <EventListContent excludePastEvents />
-      <AddEventButton />
+      <EventListFeature excludePastEvents />
+      <EventAddButton />
     </>
   );
 }

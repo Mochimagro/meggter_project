@@ -6,7 +6,7 @@ import CircleCard from "@/features/circle/CircleCard";
 import CircleDetailLink from "@/features/circle/CircleDetailLink/CircleDetailLink";
 import CircleEditForm from "@/features/circle/CircleEditForm/CircleEditForm";
 
-export default function CirlceList() {
+export default function CircleList() {
   const circles = useLiveQuery(() =>
     db.circles.orderBy("circleName").toArray(),
   );

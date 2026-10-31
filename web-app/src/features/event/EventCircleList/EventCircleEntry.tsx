@@ -13,16 +13,17 @@ import {
   useAddWishlistItem,
   type NewWishlistItem,
 } from "@/hooks/useAddWishlistItem";
-import type { CircleCardProps } from "../entities/CardEntities";
-import InteractiveItemCard from "../features/item/InteractiveItemCard";
-import EventCircleAddItemCard from "./EventCircleAddItemCard";
+import type { CircleCardProps } from "@/entities/CardEntities";
+import InteractiveItemCard from "@/features/item/InteractiveItemCard";
+import ItemAddForm from "@/features/item/ItemAddForm/ItemAddForm";
 import { GiTwoCoins } from "react-icons/gi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { deleteEventCircle, updateEventCircle } from "@/db/recordMutations";
 import { normalizeExternalUrl } from "@/utils/externalUrl";
 import { semanticColors } from "@/theme/semanticColors";
+import CircleStatusBadge from "@/features/circle/CircleStatusBadge";
 
-export default function EventCircleListCard({
+export default function EventCircleEntry({
   id,
   circleVisitId,
   visited,
@@ -224,15 +225,7 @@ export default function EventCircleListCard({
           )}
         </Stack>
       </Card.Header>
-      <Text
-        position="absolute"
-        top={3}
-        left={3}
-        fontWeight="bold"
-        color={visited ? semanticColors.positive.text : "gray.600"}
-      >
-        {visited ? "巡回済み" : "未巡回"}
-      </Text>
+      <CircleStatusBadge visited={visited} />
       <Card.Body>
         <Stack>
           {books.map((book) => (
@@ -276,7 +269,7 @@ export default function EventCircleListCard({
         )}
       </Card.Footer>
       {isAddingItem && (
-        <EventCircleAddItemCard
+        <ItemAddForm
           onAdd={handleAddWishlistItem}
           onCancel={() => setIsAddingItem(false)}
         />
